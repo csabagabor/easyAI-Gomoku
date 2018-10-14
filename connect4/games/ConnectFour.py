@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
     ai_algo_neg = Negamax(5)
     ai_algo_sss = SSS(5)
-    game = ConnectFour([AI_Player(ai_algo_neg), AI_Player(ai_algo_sss)])
+    game = ConnectFour([Human_Player(), AI_Player(ai_algo_neg)])
     game.play()
     if game.lose():
         print("Player %d wins." % (game.nopponent))
