@@ -71,11 +71,7 @@ if __name__ == '__main__':
 
     from easyAI import Human_Player, AI_Player, Negamax, SSS, DUAL
 
-    ai_algo_neg = Negamax(7)
+    ai_algo_neg = Negamax(5)
     ai_algo_sss = SSS(5)
-    game = ConnectFour([AI_Player(ai_algo_sss), AI_Player(ai_algo_neg)])
+    game = ConnectFour([Human_Player(), AI_Player(ai_algo_neg)])
     game.play()
-    if game.lose():
-        print("Player %d wins." % (game.nopponent))
-    else:
-        print("Looks like we have a draw.")
