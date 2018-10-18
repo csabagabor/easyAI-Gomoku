@@ -1,6 +1,6 @@
 from random import randint
 from games.ConnectFour import ConnectFour
-from easyAI import Human_Player, AI_Player, Negamax, SSS, DUAL,TwoPlayersGame
+from easyAI import AI_Player, Negamax, SSS, DUAL, TwoPlayersGame
 import time
 
 try:
@@ -14,7 +14,7 @@ class Benchmark_Player:
     Class for a benchmark player, which moves immediately by random
     """
 
-    def __init__(self, name = 'Human'):
+    def __init__(self, name = 'Benchmark'):
         self.name = name
 
     def ask_move(self, game):
@@ -79,32 +79,65 @@ class ConnectFourOriginal(TwoPlayersGame):
         return False
 
 
-def run_negamax(depth):
-    ai_algo_neg = Negamax(depth)
-    game = ConnectFourOriginal([Benchmark_Player(), AI_Player(ai_algo_neg)])
+def play_game_time(game):
+    start_time = time.time()
     game.play()
+    end_time = time.time()
+    execution_time = end_time - start_time
+    return execution_time
+
+
+def create_dual(depth):
+    ai_algo_dual = DUAL(depth)
+    game = create_benchmark_game(ai_algo_dual)
+    return game
+
+
+def create_negamax(depth):
+    ai_algo_neg = Negamax(depth)
+    game = create_benchmark_game(ai_algo_neg)
+    return game
+
+
+def create_sss(depth):
+    ai_algo_sss = SSS(depth)
+    game = create_benchmark_game(ai_algo_sss)
+    return game
+
+
+def create_benchmark_game(ai_algo):
+    game = ConnectFourOriginal([Benchmark_Player(), AI_Player(ai_algo)])
+    return game
+
 
 def test():
     file = open('result_original.csv', 'w')
-    file.write("Negamax, SSS")
+    file.write("depth, Negamax, SSS, DUAL\n")
     nr_repetitions = 10
-    nr_algorithms = 5
-    for algo in range(1,nr_algorithms,1):
-        for d in range(1, 7, 1):
+    nr_algorithms = 3
+    max_depth = 3
+
+    for d in range(1, max_depth+1):
+        for algo in range(nr_algorithms):
+            file.write(b'%d' % d)
+
+            game = "No game yet"
+            if algo == 0:
+                game = create_negamax(d)
+            elif algo == 1:
+                game = create_sss(d)
+            elif algo == 2:
+                game = create_dual(d)
+
             execution_time = 0.0
-            for reps in range(1, nr_repetitions, 1):
 
-                start_time = time.time()
-                if algo == 1:
-                    execution_time +=run_negamax()
-                    if algo == nr_repetitions
-                elif algo == 2:
-                    pass
-                end_time = time.time()
-                execution_time += end_time - start_time
-
+            for reps in range(nr_repetitions):
+                execution_time += play_game_time(game)
+            file.write(b', %f' % (execution_time / nr_repetitions))
+        file.write('\n')
 
     file.close()
+
 
 if __name__ == "__main__":
     test()
