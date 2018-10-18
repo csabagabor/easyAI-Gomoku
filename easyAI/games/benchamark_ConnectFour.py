@@ -79,18 +79,32 @@ class ConnectFourOriginal(TwoPlayersGame):
         return False
 
 
-def negamaxTest():
-    file = open('negamax.csv', 'w')
-    for d in range(1, 7, 1):
-        ai_algo_neg = Negamax(d)
-        game = ConnectFourOriginal([Benchmark_Player(), AI_Player(ai_algo_neg)])
-        start_time = time.time()
-        game.play()
-        end_time = time.time()
-        executionTime = end_time - start_time
-        file.write(b"\n Result\n")
-        file.write(b'%f' % executionTime)
+def run_negamax(depth):
+    ai_algo_neg = Negamax(depth)
+    game = ConnectFourOriginal([Benchmark_Player(), AI_Player(ai_algo_neg)])
+    game.play()
+
+def test():
+    file = open('result_original.csv', 'w')
+    file.write("Negamax, SSS")
+    nr_repetitions = 10
+    nr_algorithms = 5
+    for algo in range(1,nr_algorithms,1):
+        for d in range(1, 7, 1):
+            execution_time = 0.0
+            for reps in range(1, nr_repetitions, 1):
+
+                start_time = time.time()
+                if algo == 1:
+                    execution_time +=run_negamax()
+                    if algo == nr_repetitions
+                elif algo == 2:
+                    pass
+                end_time = time.time()
+                execution_time += end_time - start_time
+
+
     file.close()
 
 if __name__ == "__main__":
-    negamaxTest()
+    test()
