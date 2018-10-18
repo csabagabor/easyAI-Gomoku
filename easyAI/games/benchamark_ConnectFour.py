@@ -3,6 +3,7 @@ from games.ConnectFour import ConnectFour
 from easyAI import AI_Player, Negamax, SSS, DUAL, TwoPlayersGame
 import time
 
+
 try:
     import numpy as np
 except ImportError:
@@ -81,7 +82,7 @@ class ConnectFourOriginal(TwoPlayersGame):
 
 def play_game_time(game):
     start_time = time.time()
-    game.play()
+    game.play(verbose = False)
     end_time = time.time()
     execution_time = end_time - start_time
     return execution_time
@@ -111,32 +112,38 @@ def create_benchmark_game(ai_algo):
 
 
 def test():
-    file = open('result_original.csv', 'w')
-    file.write("depth, Negamax, SSS, DUAL\n")
+    f = open('result_original.csv', 'w')
+    f.write("depth, Negamax, SSS, DUAL\n")
     nr_repetitions = 10
     nr_algorithms = 3
-    max_depth = 3
+    max_depth = 8
 
     for d in range(1, max_depth+1):
+        print "depth: ",d
         for algo in range(nr_algorithms):
-            file.write(b'%d' % d)
+            print "    algo: ",algo
+            f.write(b'%d' % d)
 
             game = "No game yet"
-            if algo == 0:
-                game = create_negamax(d)
-            elif algo == 1:
-                game = create_sss(d)
-            elif algo == 2:
-                game = create_dual(d)
+
 
             execution_time = 0.0
 
             for reps in range(nr_repetitions):
-                execution_time += play_game_time(game)
-            file.write(b', %f' % (execution_time / nr_repetitions))
-        file.write('\n')
+                # must create new instance of the game every time else the game cannot be restarted
+                if algo == 0:
+                    game = create_negamax(d)
+                elif algo == 1:
+                    game = create_sss(d)
+                elif algo == 2:
+                    game = create_dual(d)
 
-    file.close()
+                execution_time += play_game_time(game)
+            f.write(b', %f' % (execution_time / nr_repetitions))
+        f.write('\n')
+        print "\n"
+
+    f.close()
 
 
 if __name__ == "__main__":
