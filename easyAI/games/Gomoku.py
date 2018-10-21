@@ -99,6 +99,8 @@ class Gomoku(TwoPlayersGame):
                     return True
                 if self.diagonal_right_up_win(x, y, length, nplayer):
                     return True
+                if self.diagonal_left_down_win(x, y, length, nplayer):
+                    return True
 
                 return False
 
@@ -184,6 +186,37 @@ class Gomoku(TwoPlayersGame):
             if curr_y < self.size and curr_x >= 0:
                 if self.board[curr_y, curr_x] == nplayer:
                     down += 1
+                else:
+                    break
+
+        if top + down + 1 == length:
+            return True
+        return False
+
+    def diagonal_left_down_win(self, x, y, length, nplayer):
+        # diagonal direction
+        curr_x = x
+        curr_y = y
+        top = 0  # how many dots on the top direction
+        down = 0  # and on the bottom direction
+
+        # search for dots on top
+        for i in range(1, length):
+            curr_y = y + i
+            curr_x = x + i
+            if curr_y < self.size and curr_x < self.size:
+                if self.board[curr_y, curr_x] == nplayer:
+                    down += 1
+                else:
+                    break
+
+        # search for dots on bottom
+        for i in range(1, length):
+            curr_y = y - i
+            curr_x = x - i
+            if curr_y >= 0 and curr_x >= 0:
+                if self.board[curr_y, curr_x] == nplayer:
+                    top += 1
                 else:
                     break
 
