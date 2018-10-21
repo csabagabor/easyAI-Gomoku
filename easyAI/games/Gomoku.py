@@ -83,8 +83,8 @@ class Gomoku(TwoPlayersGame):
             for j in range(self.size):
                 if self.board[i, j] == 1:
                     board_str += Fore.GREEN + "1" + Style.RESET_ALL
-                if self.board[i, j] == 2:
-                    board_str += Fore.RED + "0" + Style.RESET_ALL
+                elif self.board[i, j] == 2:
+                    board_str += Fore.RED + "2" + Style.RESET_ALL
                 else:
                     board_str += str(self.board[i, j])
             board_str += "\n"
@@ -241,8 +241,8 @@ class Gomoku(TwoPlayersGame):
 if __name__ == "__main__":
     from easyAI import AI_Player, Negamax
 
-    ai_algo = Negamax(1)
-    game = Gomoku([Human_Player(), Human_Player()], 6)
+    ai_algo = Negamax(4)
+    game = Gomoku([Human_Player(), AI_Player(ai_algo)], 6)
     game.play()
     if game.lose():
         print("Player %d wins!" % game.nopponent)
