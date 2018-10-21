@@ -4,3 +4,4 @@ easyAI/.idea/easyAI.iml
 easyAI/.idea/misc.xml
 easyAI/.idea/modules.xml
 easyAI/.idea/workspace.xml
+*.pyc
