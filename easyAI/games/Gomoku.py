@@ -95,6 +95,8 @@ class Gomoku(TwoPlayersGame):
 
                 if self.horizontal_win(x, y, length, nplayer):
                     return True
+                if self.vertical_win(x, y, length, nplayer):
+                    return True
 
                 return False
 
@@ -126,6 +128,34 @@ class Gomoku(TwoPlayersGame):
             return True
         return False
 
+    def vertical_win(self,x, y, length, nplayer):
+        # vertical direction
+        curr_x = x
+        curr_y = y
+        top = 0  # how many dots on the top direction
+        down = 0  # and on the bottom direction
+
+        # search for dots on top
+        for i in range(1, length):
+            curr_y = y - i
+            if curr_y >= 0:
+                if self.board[curr_y, curr_x] == nplayer:
+                    top += 1
+                else:
+                    break
+
+        # search for dots on bottom
+        for i in range(1, length):
+            curr_y = y + i
+            if curr_y < self.size:
+                if self.board[curr_y, curr_x] == nplayer:
+                    down += 1
+                else:
+                    break
+
+        if top + down + 1 == length:
+            return True
+        return False
 
 if __name__ == "__main__":
     from easyAI import AI_Player, Negamax
