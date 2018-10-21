@@ -1,6 +1,15 @@
 from easyAI import TwoPlayersGame
 from easyAI.Player import Human_Player
 
+
+try:
+    from colorama import init
+    init()
+    from colorama import Fore, Back, Style
+except ImportError:
+    print("Sorry, this example requires Colorama installed !")
+    raise
+
 try:
     import numpy as np
 except ImportError:
@@ -72,7 +81,12 @@ class Gomoku(TwoPlayersGame):
         for i in range(self.size):
             board_str += str(i) + "#"
             for j in range(self.size):
-                board_str += str(self.board[i, j])
+                if self.board[i, j] == 1:
+                    board_str += Fore.GREEN + "1" + Style.RESET_ALL
+                if self.board[i, j] == 2:
+                    board_str += Fore.RED + "0" + Style.RESET_ALL
+                else:
+                    board_str += str(self.board[i, j])
             board_str += "\n"
         print board_str
 
