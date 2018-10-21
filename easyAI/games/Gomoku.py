@@ -239,9 +239,10 @@ class Gomoku(TwoPlayersGame):
         return False
 
 if __name__ == "__main__":
-    from easyAI import AI_Player, Negamax
+    from easyAI import AI_Player, Negamax, SSS, DUAL
 
-    ai_algo = Negamax(4)
+    ai_algo = Negamax(5)
+    ai_algo2 = SSS(2)
     game = Gomoku([Human_Player(), AI_Player(ai_algo)], 6)
     game.play()
     if game.lose():
