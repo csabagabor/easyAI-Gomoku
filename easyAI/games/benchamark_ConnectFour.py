@@ -2,7 +2,7 @@ from random import randint
 from games.ConnectFour import ConnectFour
 from easyAI import AI_Player, Negamax, SSS, DUAL, TwoPlayersGame
 import time
-
+from games.SimpleNegamax import SimpleNegamax
 
 try:
     import numpy as np
@@ -95,7 +95,7 @@ def create_dual(depth):
 
 
 def create_negamax(depth):
-    ai_algo_neg = Negamax(depth)
+    ai_algo_neg = SimpleNegamax(depth)
     game = create_benchmark_game(ai_algo_neg)
     return game
 
@@ -116,7 +116,7 @@ def test():
     f.write("depth, Negamax, SSS, DUAL\n")
     nr_repetitions = 10
     nr_algorithms = 3
-    max_depth = 8
+    max_depth = 4
 
     for d in range(1, max_depth+1):
         print "depth: ",d
