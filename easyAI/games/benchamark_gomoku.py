@@ -79,11 +79,11 @@ def test():
             for reps in range(nr_repetitions):
                 # must create new instance of the game every time else the game cannot be restarted
                 if algo == 0:
-                    game = create_negamax_tt(d)
+                    game = create_negamax(d)
                 elif algo == 1:
-                    game = create_sss_tt(d)
+                    game = create_sss(d)
                 elif algo == 2:
-                    game = create_dual_tt(d)
+                    game = create_dual(d)
 
                 execution_time += play_game_time(game)
             f.write(b', %f' % (execution_time / nr_repetitions))

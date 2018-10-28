@@ -31,6 +31,7 @@ class Gomoku(TwoPlayersGame):
         self.size = size
         self.board = np.array([[0 for i in range(self.size)] for j in range(self.size)])
         self.nplayer = 1  # player 1 starts.
+        self.last_moves_array = []
         self.last_move_x = -1
         self.last_move_y = -1
 
@@ -49,6 +50,7 @@ class Gomoku(TwoPlayersGame):
         self.board[row, column] = self.nplayer
         self.last_move_x = column
         self.last_move_y = row
+        self.last_moves_array.append([column, row])
 
     def get_coords_from_move(self, move):
         row = int(move[0])
@@ -60,8 +62,12 @@ class Gomoku(TwoPlayersGame):
         row = coords[0]
         column = coords[1]
         self.board[row, column] = 0
-        self.last_move_x = -1
-        self.last_move_y = -1
+        x = -1
+        y = -1
+        if len(self.last_moves_array) > 0:
+            [x, y] = self.last_moves_array.pop()
+        self.last_move_x = x
+        self.last_move_y = y
 
     def lose(self):
         """ Has the opponent "five in line ?" """
@@ -278,7 +284,8 @@ def play_game_transposition_table():
 if __name__ == "__main__":
     from easyAI import AI_Player, Negamax, SSS, DUAL, TT
 
-    play_game_transposition_table()
+    play_game_simple()
+    #play_game_transposition_table()
     #solve_game()
     #solve_game_df()
 
