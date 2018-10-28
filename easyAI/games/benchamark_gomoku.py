@@ -1,5 +1,5 @@
 from random import randint
-from easyAI import AI_Player, Negamax, SSS, DUAL
+from easyAI import AI_Player, Negamax, SSS, DUAL, TT
 import time
 from games.Gomoku import Gomoku
 
@@ -27,21 +27,31 @@ def play_game_time(game):
 
 def create_dual(depth):
     ai_algo_dual = DUAL(depth)
-    game = create_benchmark_game(ai_algo_dual)
-    return game
+    return create_benchmark_game(ai_algo_dual)
 
 
 def create_negamax(depth):
     ai_algo_neg = Negamax(depth)
-    game = create_benchmark_game(ai_algo_neg)
-    return game
+    return create_benchmark_game(ai_algo_neg)
 
 
 def create_sss(depth):
     ai_algo_sss = SSS(depth)
-    game = create_benchmark_game(ai_algo_sss)
-    return game
+    return create_benchmark_game(ai_algo_sss)
 
+def create_dual_tt(depth):
+    ai_algo_dual = DUAL(depth,tt = TT())
+    return create_benchmark_game(ai_algo_dual)
+
+
+def create_negamax_tt(depth):
+    ai_algo_neg = Negamax(depth,tt = TT())
+    return create_benchmark_game(ai_algo_neg)
+
+
+def create_sss_tt(depth):
+    ai_algo_sss = SSS(depth,tt = TT())
+    return create_benchmark_game(ai_algo_sss)
 
 def create_benchmark_game(ai_algo):
     game = Gomoku([Benchmark_Player(), AI_Player(ai_algo)], 6)
@@ -69,11 +79,11 @@ def test():
             for reps in range(nr_repetitions):
                 # must create new instance of the game every time else the game cannot be restarted
                 if algo == 0:
-                    game = create_negamax(d)
+                    game = create_negamax_tt(d)
                 elif algo == 1:
-                    game = create_sss(d)
+                    game = create_sss_tt(d)
                 elif algo == 2:
-                    game = create_dual(d)
+                    game = create_dual_tt(d)
 
                 execution_time += play_game_time(game)
             f.write(b', %f' % (execution_time / nr_repetitions))

@@ -1,4 +1,4 @@
-from easyAI import TwoPlayersGame
+from easyAI import TwoPlayersGame, id_solve, df_solve
 from easyAI.Player import Human_Player
 
 
@@ -69,6 +69,9 @@ class Gomoku(TwoPlayersGame):
 
     def is_over(self):
         return (self.possible_moves() == []) or self.lose()
+
+    def ttentry(self):
+        return "".join([".0X"[i] for i in self.board.flatten()])
 
     def show(self):
         board_str = "  "
@@ -238,14 +241,44 @@ class Gomoku(TwoPlayersGame):
             return True
         return False
 
-if __name__ == "__main__":
-    from easyAI import AI_Player, Negamax, SSS, DUAL
 
+def solve_game():
+    tt = TT()
+    r, d, m = id_solve(Gomoku, range(2, 20), win_score=100, tt=tt)
+    print r,d,m
+
+
+def solve_game_df():
+    ai_algo = Negamax(10, tt=TT())
+    game = Gomoku([Human_Player(), AI_Player(ai_algo)], 5)
+    result = df_solve(game, win_score=100, maxdepth=10, tt=TT(), depth=0)
+    print result
+
+
+def play_game_simple():
     ai_algo = Negamax(5)
-    ai_algo2 = SSS(2)
-    game = Gomoku([Human_Player(), AI_Player(ai_algo)], 6)
+    game = Gomoku([Human_Player(), AI_Player(ai_algo)], 5)
     game.play()
     if game.lose():
         print("Player %d wins!" % game.nopponent)
     else:
         print("Draw!")
+
+
+def play_game_transposition_table():
+    ai_algo = Negamax(5, tt = TT())
+    game = Gomoku([Human_Player(), AI_Player(ai_algo)], 5)
+    game.play()
+    if game.lose():
+        print("Player %d wins!" % game.nopponent)
+    else:
+        print("Draw!")
+
+
+if __name__ == "__main__":
+    from easyAI import AI_Player, Negamax, SSS, DUAL, TT
+
+    play_game_transposition_table()
+    #solve_game()
+    #solve_game_df()
+
