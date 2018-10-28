@@ -31,7 +31,6 @@ class Gomoku(TwoPlayersGame):
         self.size = size
         self.board = np.array([[0 for i in range(self.size)] for j in range(self.size)])
         self.nplayer = 1  # player 1 starts.
-        self.last_moves_array = []
         self.last_move_x = -1
         self.last_move_y = -1
 
@@ -50,13 +49,19 @@ class Gomoku(TwoPlayersGame):
         self.board[row, column] = self.nplayer
         self.last_move_x = column
         self.last_move_y = row
-        self.last_moves_array.append([column, row])
 
     def get_coords_from_move(self, move):
         row = int(move[0])
         column = ord(move[1]) - ord('a')  # letter
         return [row, column]
 
+    def unmake_move(self, move):  # optional method (speeds up the AI)
+        coords = self.get_coords_from_move(move)
+        row = coords[0]
+        column = coords[1]
+        self.board[row, column] = 0
+        self.last_move_x = -1 #last move doesn't need to be saved because the player cannot "win" by unmaking his move
+        self.last_move_y = -1
 
     def lose(self):
         """ Has the opponent "five in line ?" """
