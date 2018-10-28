@@ -57,17 +57,6 @@ class Gomoku(TwoPlayersGame):
         column = ord(move[1]) - ord('a')  # letter
         return [row, column]
 
-    def unmake_move(self, move):  # optional method (speeds up the AI)
-        coords = self.get_coords_from_move(move)
-        row = coords[0]
-        column = coords[1]
-        self.board[row, column] = 0
-        x = -1
-        y = -1
-        if len(self.last_moves_array) > 0:
-            [x, y] = self.last_moves_array.pop()
-        self.last_move_x = x
-        self.last_move_y = y
 
     def lose(self):
         """ Has the opponent "five in line ?" """
@@ -110,22 +99,21 @@ class Gomoku(TwoPlayersGame):
         x = self.last_move_x
         y = self.last_move_y
 
+
         if x != -1 and y != -1:
-            x = self.last_move_x
-            y = self.last_move_y
 
-            if x != -1 and y != -1:
+            if self.horizontal_win(x, y, length, nplayer):
+                return True
+            if self.vertical_win(x, y, length, nplayer):
+                return True
+            if self.diagonal_right_up_win(x, y, length, nplayer):
+                return True
+            if self.diagonal_left_down_win(x, y, length, nplayer):
+                return True
 
-                if self.horizontal_win(x, y, length, nplayer):
-                    return True
-                if self.vertical_win(x, y, length, nplayer):
-                    return True
-                if self.diagonal_right_up_win(x, y, length, nplayer):
-                    return True
-                if self.diagonal_left_down_win(x, y, length, nplayer):
-                    return True
+            return False
 
-                return False
+        return False
 
     def horizontal_win(self,x, y, length, nplayer):
         # horizontal direction
