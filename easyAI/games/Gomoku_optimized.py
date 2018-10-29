@@ -1,6 +1,6 @@
 from easyAI import TwoPlayersGame, id_solve, df_solve
 from easyAI.Player import Human_Player
-import find_five_cython
+from find_five_cython import find_five
 
 try:
     from colorama import init
@@ -65,7 +65,10 @@ class Gomoku(TwoPlayersGame):
 
     def lose(self):
         """ Has the opponent "five in line ?" """
-        return find_five(self.nopponent)
+        is_five = find_five(self.nopponent, self.board, self.size, self.last_move_x, self.last_move_y)
+        if is_five == 0:
+            return False
+        return True
 
     def is_over(self):
         return (self.possible_moves() == []) or self.lose()
