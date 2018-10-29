@@ -17,7 +17,7 @@ except ImportError:
     raise
 
 
-class Gomoku(TwoPlayersGame):
+class Gomoku_optimized(TwoPlayersGame):
     """ The board positions are numbered as follows:
             0 1 2
             3 4 5
@@ -102,20 +102,20 @@ class Gomoku(TwoPlayersGame):
 
 def solve_game():
     tt = TT()
-    r, d, m = id_solve(Gomoku, range(2, 20), win_score=100, tt=tt)
+    r, d, m = id_solve(Gomoku_optimized, range(2, 20), win_score=100, tt=tt)
     print r,d,m
 
 
 def solve_game_df():
     ai_algo = Negamax(10, tt=TT())
-    game = Gomoku([Human_Player(), AI_Player(ai_algo)], 5)
+    game = Gomoku_optimized([Human_Player(), AI_Player(ai_algo)], 5)
     result = df_solve(game, win_score=100, maxdepth=10, tt=TT(), depth=0)
     print result
 
 
 def play_game_simple():
     ai_algo = Negamax(5)
-    game = Gomoku([Human_Player(), AI_Player(ai_algo)], 5)
+    game = Gomoku_optimized([Human_Player(), AI_Player(ai_algo)], 5)
     game.play()
     if game.lose():
         print("Player %d wins!" % game.nopponent)
@@ -125,7 +125,7 @@ def play_game_simple():
 
 def play_game_transposition_table():
     ai_algo = Negamax(5, tt = TT())
-    game = Gomoku([Human_Player(), AI_Player(ai_algo)], 5)
+    game = Gomoku_optimized([Human_Player(), AI_Player(ai_algo)], 5)
     game.play()
     if game.lose():
         print("Player %d wins!" % game.nopponent)

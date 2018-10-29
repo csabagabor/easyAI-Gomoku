@@ -1,13 +1,13 @@
 import numpy as np
 cimport numpy as np
 
-cpdef int find_five(nplayer,np.ndarray[long, ndim=2] board,size, last_move_x,last_move_y):
+cpdef int find_five(int nplayer,np.ndarray[long, ndim=2] board,int size,int last_move_x,int last_move_y):
     """
     Returns True iff the player 'nplayer' has connected 5 (or more) pieces
     """
-    length = 5
-    x = last_move_x
-    y = last_move_y
+    cdef int length = 5
+    cdef int x = last_move_x
+    cdef int y = last_move_y
 
 
     if x != -1 and y != -1:
@@ -25,12 +25,12 @@ cpdef int find_five(nplayer,np.ndarray[long, ndim=2] board,size, last_move_x,las
 
     return 0
 
-def horizontal_win(board,size, x, y, length, nplayer):
+cpdef int horizontal_win(np.ndarray[long, ndim=2] board,int size,int  x,int  y,int  length,int  nplayer):
     # horizontal direction
-    curr_x = x
-    curr_y = y
-    left = 0  # how many dots on the left
-    right = 0  # and on the right respectively
+    cdef int curr_x = x
+    cdef int curr_y = y
+    cdef int left = 0  # how many dots on the left
+    cdef int right = 0  # and on the right respectively
 
     # search for dots at right
     for i in range(1, length):
@@ -50,15 +50,15 @@ def horizontal_win(board,size, x, y, length, nplayer):
                 break
 
     if right + left + 1 == length:
-        return True
-    return False
+        return 1
+    return 0
 
-def vertical_win(board,size,x, y, length, nplayer):
+cpdef int vertical_win(np.ndarray[long, ndim=2] board,int size,int  x,int  y,int  length,int  nplayer):
     # vertical direction
-    curr_x = x
-    curr_y = y
-    top = 0  # how many dots on the top direction
-    down = 0  # and on the bottom direction
+    cdef int curr_x = x
+    cdef int curr_y = y
+    cdef int top = 0  # how many dots on the top direction
+    cdef int down = 0  # and on the bottom direction
 
     # search for dots on top
     for i in range(1, length):
@@ -79,16 +79,16 @@ def vertical_win(board,size,x, y, length, nplayer):
                 break
 
     if top + down + 1 == length:
-        return True
-    return False
+        return 1
+    return 0
 
 
-def diagonal_right_up_win(board,size,x, y, length, nplayer):
+cpdef int diagonal_right_up_win(np.ndarray[long, ndim=2] board,int size,int  x,int  y,int  length,int  nplayer):
     # diagonal direction
-    curr_x = x
-    curr_y = y
-    top = 0  # how many dots on the top direction
-    down = 0  # and on the bottom direction
+    cdef int curr_x = x
+    cdef int curr_y = y
+    cdef int top = 0  # how many dots on the top direction
+    cdef int down = 0  # and on the bottom direction
 
     # search for dots on top
     for i in range(1, length):
@@ -111,15 +111,15 @@ def diagonal_right_up_win(board,size,x, y, length, nplayer):
                 break
 
     if top + down + 1 == length:
-        return True
-    return False
+        return 1
+    return 0
 
-def diagonal_left_down_win(board,size, x, y, length, nplayer):
+cpdef int diagonal_left_down_win(np.ndarray[long, ndim=2] board,int size,int  x,int  y,int  length,int  nplayer):
     # diagonal direction
-    curr_x = x
-    curr_y = y
-    top = 0  # how many dots on the top direction
-    down = 0  # and on the bottom direction
+    cdef int curr_x = x
+    cdef int curr_y = y
+    cdef int top = 0  # how many dots on the top direction
+    cdef int down = 0  # and on the bottom direction
 
     # search for dots on top
     for i in range(1, length):
@@ -142,5 +142,5 @@ def diagonal_left_down_win(board,size, x, y, length, nplayer):
                 break
 
     if top + down + 1 == length:
-        return True
-    return False
+        return 1
+    return 0
