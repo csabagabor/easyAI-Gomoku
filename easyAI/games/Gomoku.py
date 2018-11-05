@@ -65,7 +65,8 @@ class Gomoku(TwoPlayersGame):
 
     def lose(self):
         """ Has the opponent "five in line ?" """
-        return self.find_five(self.nopponent)
+        self.haslost = self.find_five(self.nopponent)
+        return self.haslost
 
     def is_over(self):
         return (self.possible_moves() == []) or self.lose()
@@ -94,7 +95,12 @@ class Gomoku(TwoPlayersGame):
         print board_str
 
     def scoring(self):
-        return -100 if self.lose() else 0
+        if self.haslost != None: #make AI faster, checks connected line only once in a single step
+            haslost = self.haslost
+            self.haslost = None
+            return -100 if haslost else 0
+        else:
+            return -100 if self.lose() else 0
 
     def find_five(self, nplayer):
         """

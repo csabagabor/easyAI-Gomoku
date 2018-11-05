@@ -1,8 +1,7 @@
 from random import randint
 from easyAI import AI_Player, Negamax, SSS, DUAL, TT
 import time
-from games.Gomoku import Gomoku
-from games.Gomoku_optimized import Gomoku_optimized
+
 
 class Benchmark_Player:
     """
@@ -54,9 +53,13 @@ def create_sss_tt(depth):
     ai_algo_sss = SSS(depth,tt = TT())
     return create_benchmark_game(ai_algo_sss)
 
+
+from games.Gomoku import Gomoku
+#from games.Gomoku_optimized import Gomoku_optimized
+
 def create_benchmark_game(ai_algo):
-    #game = Gomoku([Benchmark_Player(), AI_Player(ai_algo)], 6)
-    game = Gomoku_optimized([Benchmark_Player(), AI_Player(ai_algo)], 6)
+    game = Gomoku([Benchmark_Player(), AI_Player(ai_algo)], 6)
+    #game = Gomoku_optimized([Benchmark_Player(), AI_Player(ai_algo)], 6)
     return game
 
 
