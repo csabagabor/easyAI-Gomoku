@@ -1,6 +1,6 @@
 from easyAI import TwoPlayersGame, id_solve, df_solve
 from easyAI.Player import Human_Player
-
+import enum
 
 try:
     from colorama import init
@@ -16,6 +16,11 @@ except ImportError:
     print("Sorry, this example requires Numpy installed !")
     raise
 
+class Threat(enum.Enum):
+    open_three = 1
+    closed_three = 2
+    open_four = 3
+    closed_four = 4
 
 class Gomoku_Strategic(TwoPlayersGame):
     """ The board positions are numbered as follows:
@@ -96,11 +101,36 @@ class Gomoku_Strategic(TwoPlayersGame):
 
     def scoring(self):
         if self.haslost != None: #make AI faster, checks connected line only once in a single step
-            haslost = self.haslost
             self.haslost = None
-            return -100 if haslost else 0
-        else:
-            return -100 if self.lose() else 0
+            if self.haslost:
+                return -100
+        elif self.lose():
+                return -100
+        strategic_score = self.strategic_score(self.board, self.size, self.nplayer, self.nopponent)
+        strategic_score -= 1.2*self.strategic_score(self.board, self.size, self.nopponent, self.nplayer)
+        if strategic_score > 0:
+            return 0
+        if strategic_score < -100:
+            return -100
+        return 0
+
+
+    def strategic_score(self, board, size, nplayer, opponent):
+        first = opponent #first disk type in a sequence(to know if it is open or closed sequence)
+        last = opponent #last disk type
+        nr = 0
+        open_four_score = 100 #definite lost/win
+        closed_four_score = 30
+        open_three_score = 25
+        closed_three_score = 15
+        open_three = "0"+str(nplayer)*3+"0"
+        score = 0
+        for i in range(0, self.size):
+            row = ''.join([str(item) for item in board[i][:]])
+            if open_three in row:
+                score += open_three_score
+                row.replace(open_three, '')
+        return score
 
     def find_five(self, nplayer):
         """
