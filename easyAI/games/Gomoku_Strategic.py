@@ -129,11 +129,21 @@ class Gomoku_Strategic(TwoPlayersGame):
         score = 0
 
         for i in range(0, size):
-            row = ''.join([str(item) for item in board[i][:]])
-            score += self.threats_horizontal(threats, row, nplayer)
+            row = ''.join([str(item) for item in board[i, :]])
+            score += self.threats_in_line(threats, row, nplayer)
+        for j in range(0, size):
+            column = ''.join([str(item) for item in board[:, j]])
+            score += self.threats_in_line(threats, column, nplayer)
+        for k in range(-size + 1, size - 1): #diagonal
+            diagonal = ''.join([str(item) for item in board.diagonal(k)])
+            if len(diagonal) >= 5: #cannot create threat in smaller area
+                score += self.threats_in_line(threats, diagonal, nplayer)
+            diagonal = ''.join([str(item) for item in board[::-1].diagonal(k)])
+            if len(diagonal) >= 5:
+                score += self.threats_in_line(threats, diagonal, nplayer)
         return score
 
-    def threats_horizontal(self, threats, row, nplayer):
+    def threats_in_line(self, threats, row, nplayer):
         threat_left = True
         score = 0
         while threat_left and row.count(str(nplayer)) > 2:
