@@ -1,5 +1,6 @@
 from easyAI import TwoPlayersGame, id_solve, df_solve
 from easyAI.Player import Human_Player
+from collections import OrderedDict
 import enum
 
 try:
@@ -101,35 +102,43 @@ class Gomoku_Strategic(TwoPlayersGame):
 
     def scoring(self):
         if self.haslost != None: #make AI faster, checks connected line only once in a single step
-            self.haslost = None
             if self.haslost:
+                self.haslost = None
                 return -100
+            else:
+                self.haslost = None
         elif self.lose():
                 return -100
-        strategic_score = self.strategic_score(self.board, self.size, self.nplayer, self.nopponent)
-        strategic_score -= 1.2*self.strategic_score(self.board, self.size, self.nopponent, self.nplayer)
+        strategic_score = self.strategic_score(self.board, self.size, self.nplayer)
+        strategic_score -= 1.2*self.strategic_score(self.board, self.size, self.nopponent)
         if strategic_score > 0:
             return 0
-        if strategic_score < -100:
-            return -100
+        if strategic_score < -90:
+            return -90
         return 0
 
-
-    def strategic_score(self, board, size, nplayer, opponent):
-        first = opponent #first disk type in a sequence(to know if it is open or closed sequence)
-        last = opponent #last disk type
-        nr = 0
-        open_four_score = 100 #definite lost/win
-        closed_four_score = 30
-        open_three_score = 25
-        closed_three_score = 15
-        open_three = "0"+str(nplayer)*3+"0"
+    def strategic_score(self, board, size, nplayer):
+        threats = OrderedDict() #key - name of threat; value - (representation, score)
+        threats['open_four'] = ("0"+str(nplayer)*4+"0", 100) #certain loose/win
+        threats['open_three'] = ("0"+str(nplayer)*3+"0", 25)
+        threats['closed_four'] = (str(nplayer)*4+"0", 25)
+        threats['closed_four2'] = ("0" + str(nplayer) * 4, 25)
+        threats['closed_three'] = (str(nplayer) * 3 + "0", 25)
+        threats['closed_three2'] = ("0" + str(nplayer) * 3, 25)
         score = 0
+
         for i in range(0, self.size):
             row = ''.join([str(item) for item in board[i][:]])
-            if open_three in row:
-                score += open_three_score
-                row.replace(open_three, '')
+            #order of if clauses is important
+        for name, v in threats.items():
+            if v[0] in row:
+                score += v[1]
+                row = row.replace(v[0], '5' * len(v[0]))#caution - this works with simple
+                # threats but not with complicated ones
+                # if 2 different threats want to use the same free space,
+                # only one can use it....
+                if score > 25:
+                    pass
         return score
 
     def find_five(self, nplayer):
@@ -291,7 +300,7 @@ def solve_game_df():
 
 
 def play_game_simple():
-    ai_algo = Negamax(5)
+    ai_algo = Negamax(4)
     game = Gomoku_Strategic([Human_Player(), AI_Player(ai_algo)], 6)
     game.play()
     if game.lose():
@@ -301,7 +310,7 @@ def play_game_simple():
 
 
 def play_game_transposition_table():
-    ai_algo = Negamax(5, tt = TT())
+    ai_algo = Negamax(4, tt = TT())
     game = Gomoku_Strategic([Human_Player(), AI_Player(ai_algo)], 6)
     game.play()
     if game.lose():
