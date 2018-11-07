@@ -56,10 +56,12 @@ def create_sss_tt(depth):
 
 from games.Gomoku import Gomoku
 #from games.Gomoku_optimized import Gomoku_optimized
+from games.Gomoku_Strategic import Gomoku_Strategic
 
 def create_benchmark_game(ai_algo):
     game = Gomoku([Benchmark_Player(), AI_Player(ai_algo)], 6)
     #game = Gomoku_optimized([Benchmark_Player(), AI_Player(ai_algo)], 6)
+    #game = Gomoku_Strategic([Benchmark_Player(), AI_Player(ai_algo)], 6)
     return game
 
 
