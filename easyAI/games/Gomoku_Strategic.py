@@ -152,12 +152,11 @@ class Gomoku_Strategic(TwoPlayersGame):
                 if v[0] in row:
                     threat_left = True
                     score += v[1]
+
                     row = row.replace(v[0], '5' * len(v[0]))  # caution - this works with simple
                     # threats but not with complicated ones
                     # if 2 different threats want to use the same free space,
                     # only one can use it....
-                    if score > 25:
-                        pass
         return score
 
     def find_five(self, nplayer):
