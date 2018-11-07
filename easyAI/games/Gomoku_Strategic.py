@@ -1,6 +1,7 @@
 from easyAI import TwoPlayersGame, id_solve, df_solve
 from easyAI.Player import Human_Player
-
+from collections import OrderedDict
+import enum
 
 try:
     from colorama import init
@@ -16,6 +17,11 @@ except ImportError:
     print("Sorry, this example requires Numpy installed !")
     raise
 
+class Threat(enum.Enum):
+    open_three = 1
+    closed_three = 2
+    open_four = 3
+    closed_four = 4
 
 class Gomoku_Strategic(TwoPlayersGame):
     """ The board positions are numbered as follows:
@@ -96,11 +102,62 @@ class Gomoku_Strategic(TwoPlayersGame):
 
     def scoring(self):
         if self.haslost != None: #make AI faster, checks connected line only once in a single step
-            haslost = self.haslost
-            self.haslost = None
-            return -100 if haslost else 0
-        else:
-            return -100 if self.lose() else 0
+            if self.haslost:
+                self.haslost = None
+                return -100
+            else:
+                self.haslost = None
+        elif self.lose():
+                return -100
+        strategic_score = self.strategic_score(self.board, self.size, self.nplayer)
+        strategic_score -= 1.2*self.strategic_score(self.board, self.size, self.nopponent)
+        if strategic_score > 0:
+            return 0
+        if strategic_score < -90:
+            return -90
+        return strategic_score
+
+    def strategic_score(self, board, size, nplayer):
+        threats = OrderedDict() #key - name of threat; value - (representation, score)
+        # !!!! order of items is important
+        threats['open_four'] = ("0"+str(nplayer)*4+"0", 100) #certain loose/win
+        threats['open_three'] = ("0"+str(nplayer)*3+"0", 25)
+        threats['closed_four'] = (str(nplayer)*4+"0", 30)
+        threats['closed_four2'] = ("0" + str(nplayer) * 4, 30)
+        threats['closed_three'] = (str(nplayer) * 3 + "0", 15)
+        threats['closed_three2'] = ("0" + str(nplayer) * 3, 15)
+        score = 0
+
+        for i in range(0, size):
+            row = ''.join([str(item) for item in board[i, :]])
+            score += self.threats_in_line(threats, row, nplayer)
+        for j in range(0, size):
+            column = ''.join([str(item) for item in board[:, j]])
+            score += self.threats_in_line(threats, column, nplayer)
+        for k in range(-size + 1, size - 1): #diagonal
+            diagonal = ''.join([str(item) for item in board.diagonal(k)])
+            if len(diagonal) >= 5: #cannot create threat in smaller area
+                score += self.threats_in_line(threats, diagonal, nplayer)
+            diagonal = ''.join([str(item) for item in board[::-1].diagonal(k)])
+            if len(diagonal) >= 5:
+                score += self.threats_in_line(threats, diagonal, nplayer)
+        return score
+
+    def threats_in_line(self, threats, row, nplayer):
+        threat_left = True
+        score = 0
+        while threat_left and row.count(str(nplayer)) > 2:
+            threat_left = False
+            for name, v in threats.items():
+                if v[0] in row:
+                    threat_left = True
+                    score += v[1]
+
+                    row = row.replace(v[0], '5' * len(v[0]))  # caution - this works with simple
+                    # threats but not with complicated ones
+                    # if 2 different threats want to use the same free space,
+                    # only one can use it....
+        return score
 
     def find_five(self, nplayer):
         """
@@ -261,7 +318,7 @@ def solve_game_df():
 
 
 def play_game_simple():
-    ai_algo = Negamax(5)
+    ai_algo = Negamax(4)
     game = Gomoku_Strategic([Human_Player(), AI_Player(ai_algo)], 6)
     game.play()
     if game.lose():
@@ -271,7 +328,7 @@ def play_game_simple():
 
 
 def play_game_transposition_table():
-    ai_algo = Negamax(5, tt = TT())
+    ai_algo = Negamax(4, tt = TT())
     game = Gomoku_Strategic([Human_Player(), AI_Player(ai_algo)], 6)
     game.play()
     if game.lose():
