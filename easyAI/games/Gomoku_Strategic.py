@@ -40,6 +40,15 @@ class Gomoku_Strategic(TwoPlayersGame):
         self.last_move_x = -1
         self.last_move_y = -1
 
+        self.threats = OrderedDict()  # key - name of threat; value - (representation, score)
+        # !!!! order of items is important
+        self.threats['open_four'] = ("0" + str(self.nplayer) * 4 + "0", 100)  # certain loose/win
+        self.threats['open_three'] = ("0" + str(self.nplayer) * 3 + "0", 25)
+        self.threats['closed_four'] = (str(self.nplayer) * 4 + "0", 30)
+        self.threats['closed_four2'] = ("0" + str(self.nplayer) * 4, 30)
+        self.threats['closed_three'] = (str(self.nplayer) * 3 + "0", 15)
+        self.threats['closed_three2'] = ("0" + str(self.nplayer) * 3, 15)
+
     def possible_moves(self):
         possible_moves = []
         for i in range(self.size):
@@ -109,25 +118,17 @@ class Gomoku_Strategic(TwoPlayersGame):
                 self.haslost = None
         elif self.lose():
                 return -100
-        strategic_score = self.strategic_score(self.board, self.size, self.nplayer)
-        strategic_score -= 1.2*self.strategic_score(self.board, self.size, self.nopponent)
+        strategic_score = self.strategic_score(self.board, self.size, self.nplayer, self.threats)
+        strategic_score -= 1.2*self.strategic_score(self.board, self.size, self.nopponent, self.threats)
         if strategic_score > 0:
             return 0
         if strategic_score < -90:
             return -90
         return strategic_score
 
-    def strategic_score(self, board, size, nplayer):
-        threats = OrderedDict() #key - name of threat; value - (representation, score)
-        # !!!! order of items is important
-        threats['open_four'] = ("0"+str(nplayer)*4+"0", 100) #certain loose/win
-        threats['open_three'] = ("0"+str(nplayer)*3+"0", 25)
-        threats['closed_four'] = (str(nplayer)*4+"0", 30)
-        threats['closed_four2'] = ("0" + str(nplayer) * 4, 30)
-        threats['closed_three'] = (str(nplayer) * 3 + "0", 15)
-        threats['closed_three2'] = ("0" + str(nplayer) * 3, 15)
-        score = 0
+    def strategic_score(self, board, size, nplayer, threats):
 
+        score = 0
         for i in range(0, size):
             row = ''.join([str(item) for item in board[i, :]])
             score += self.threats_in_line(threats, row, nplayer)
