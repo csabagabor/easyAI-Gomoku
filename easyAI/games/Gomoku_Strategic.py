@@ -1,9 +1,7 @@
 from easyAI import TwoPlayersGame, id_solve, df_solve
 from easyAI.Player import Human_Player
-from games.Negamax_Iterative_Deepening import Negamax_Iterative_Deepening
 from collections import OrderedDict
-import time
-from copy import deepcopy
+from games.AI_Player_Iterative_Deepening import AI_Player_Iterative_Deepening
 
 try:
     from colorama import init
@@ -333,7 +331,8 @@ def play_game_transposition_table():
         print("Draw!")
 
 
-from games.AI_Player_Iterative_Deepening import AI_Player_Iterative_Deepening
+
+
 
 def play_iterative_deepening(timeout = 5):
     game = Gomoku_Strategic([Human_Player(), AI_Player_Iterative_Deepening(timeout=timeout)], 6)
