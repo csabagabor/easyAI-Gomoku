@@ -144,6 +144,25 @@ class Gomoku_Strategic(TwoPlayersGame):
             return -90
         return strategic_score
 
+    def win(self, board, size, nplayer):
+        five = str(nplayer) * 5
+        for i in range(0, size):
+            row = ''.join([str(item) for item in board[i, :]])
+            if five in row:
+                return True
+        for j in range(0, size):
+            column = ''.join([str(item) for item in board[:, j]])
+            if five in column:
+                return True
+        for k in range(-size + 1, size - 1):  # diagonal
+            diagonal = ''.join([str(item) for item in board.diagonal(k)])
+            if five in diagonal:
+                return True
+            diagonal = ''.join([str(item) for item in board[::-1].diagonal(k)])
+            if five in diagonal:
+                return True
+        return False
+
     def strategic_score(self, board, size, nplayer):
         threats = OrderedDict() #key - name of threat; value - (representation, score)
         # !!!! order of items is important
@@ -194,9 +213,7 @@ class Gomoku_Strategic(TwoPlayersGame):
         x = self.last_move_x
         y = self.last_move_y
 
-
         if x != -1 and y != -1:
-
             if self.horizontal_win(x, y, length, nplayer):
                 return True
             if self.vertical_win(x, y, length, nplayer):
@@ -205,9 +222,8 @@ class Gomoku_Strategic(TwoPlayersGame):
                 return True
             if self.diagonal_left_down_win(x, y, length, nplayer):
                 return True
-
-            return False
-
+        elif self.win(self.board, self.size, self.nplayer):
+            return True
         return False
 
     def horizontal_win(self,x, y, length, nplayer):
