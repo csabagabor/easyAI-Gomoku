@@ -1,9 +1,7 @@
 from easyAI import TwoPlayersGame, id_solve, df_solve
 from easyAI.Player import Human_Player
-from games.Negamax_Iterative_Deepening import Negamax_Iterative_Deepening
 from collections import OrderedDict
-import enum
-import time
+from games.AI_Player_Iterative_Deepening import AI_Player_Iterative_Deepening
 
 try:
     from colorama import init
@@ -18,12 +16,6 @@ try:
 except ImportError:
     print("Sorry, this example requires Numpy installed !")
     raise
-
-class Threat(enum.Enum):
-    open_three = 1
-    closed_three = 2
-    open_four = 3
-    closed_four = 4
 
 class Gomoku_Strategic(TwoPlayersGame):
     """ The board positions are numbered as follows:
@@ -41,13 +33,46 @@ class Gomoku_Strategic(TwoPlayersGame):
         self.nplayer = 1  # player 1 starts.
         self.last_move_x = -1
         self.last_move_y = -1
+        #improve AI (works for 1 AI only)
+        self.ai_player = -1
+        if isinstance(players[0], AI_Player_Iterative_Deepening):
+            self.ai_player = 1
+        elif isinstance(players[1],AI_Player_Iterative_Deepening):
+            self.ai_player = 2
+        elif isinstance(players[0], AI_Player):
+            self.ai_player = 1
+        elif isinstance(players[1], AI_Player):
+            self.ai_player = 2
 
     def possible_moves(self):
         possible_moves = []
-        for i in range(self.size):
-            for j in range(self.size):
-                if self.board[i, j] == 0:
-                    possible_moves.append(str(i) + chr(j + ord('a')))
+        if self.ai_player == self.nplayer:#ai player moves - reduce set of possible moves for a faster AI
+            for i in range(self.size):
+                for j in range(self.size):
+                    if self.board[i, j] != 0:#AI can move only to positions which are adjacent to non-empty cells
+                        if j+1 < self.size and self.board[i][j+1] == 0:
+                            possible_moves.append(str(i) + chr(j + 1 + ord('a')))
+                        if j-1 >= 0 and self.board[i][j-1] == 0:
+                            possible_moves.append(str(i) + chr(j - 1 + ord('a')))
+                        if i+1 < self.size and self.board[i+1][j] == 0:
+                            possible_moves.append(str(i+1) + chr(j + ord('a')))
+                            if j + 1 < self.size and self.board[i+1][j+1] == 0:
+                                possible_moves.append(str(i + 1) + chr(j + 1 + ord('a')))
+                            if j - 1 >= 0 and self.board[i+1][j-1] == 0:
+                                possible_moves.append(str(i + 1) + chr(j - 1 + ord('a')))
+                        if i-1 >= 0 and self.board[i-1][j] == 0:
+                            possible_moves.append(str(i-1) + chr(j + ord('a')))
+                            if j + 1 < self.size and self.board[i-1][j+1] == 0:
+                                possible_moves.append(str(i - 1) + chr(j + 1 + ord('a')))
+                            if j - 1 >= 0 and self.board[i-1][j-1] == 0:
+                                possible_moves.append(str(i - 1) + chr(j - 1 + ord('a')))
+            if possible_moves == []:#first move
+                possible_moves.append('0a')
+        else:
+            for i in range(self.size):
+                for j in range(self.size):
+                    if self.board[i, j] == 0:
+                        possible_moves.append(str(i) + chr(j + ord('a')))
         return possible_moves
 
     def make_move(self, move):
@@ -119,6 +144,25 @@ class Gomoku_Strategic(TwoPlayersGame):
             return -90
         return strategic_score
 
+    def win(self, board, size, nplayer):
+        five = str(nplayer) * 5
+        for i in range(0, size):
+            row = ''.join([str(item) for item in board[i, :]])
+            if five in row:
+                return True
+        for j in range(0, size):
+            column = ''.join([str(item) for item in board[:, j]])
+            if five in column:
+                return True
+        for k in range(-size + 1, size - 1):  # diagonal
+            diagonal = ''.join([str(item) for item in board.diagonal(k)])
+            if five in diagonal:
+                return True
+            diagonal = ''.join([str(item) for item in board[::-1].diagonal(k)])
+            if five in diagonal:
+                return True
+        return False
+
     def strategic_score(self, board, size, nplayer):
         threats = OrderedDict() #key - name of threat; value - (representation, score)
         # !!!! order of items is important
@@ -126,8 +170,8 @@ class Gomoku_Strategic(TwoPlayersGame):
         threats['open_three'] = ("0"+str(nplayer)*3+"0", 25)
         threats['closed_four'] = (str(nplayer)*4+"0", 30)
         threats['closed_four2'] = ("0" + str(nplayer) * 4, 30)
-        threats['closed_three'] = (str(nplayer) * 3 + "0", 15)
-        threats['closed_three2'] = ("0" + str(nplayer) * 3, 15)
+        threats['closed_three'] = (str(nplayer) * 3 + "00", 15) #we must have 2 zeros cause cannot connect 5 if there are 4 spots
+        threats['closed_three2'] = ("00" + str(nplayer) * 3, 15)
         score = 0
 
         for i in range(0, size):
@@ -169,9 +213,7 @@ class Gomoku_Strategic(TwoPlayersGame):
         x = self.last_move_x
         y = self.last_move_y
 
-
         if x != -1 and y != -1:
-
             if self.horizontal_win(x, y, length, nplayer):
                 return True
             if self.vertical_win(x, y, length, nplayer):
@@ -180,9 +222,8 @@ class Gomoku_Strategic(TwoPlayersGame):
                 return True
             if self.diagonal_left_down_win(x, y, length, nplayer):
                 return True
-
-            return False
-
+        elif self.win(self.board, self.size, self.nplayer):
+            return True
         return False
 
     def horizontal_win(self,x, y, length, nplayer):
@@ -307,12 +348,14 @@ class Gomoku_Strategic(TwoPlayersGame):
 
 
 def solve_game():
+    #to run this method we need to modify the max score to 100(check with self.win())
     tt = TT()
     r, d, m = id_solve(Gomoku_Strategic, range(2, 20), win_score=100, tt=tt)
     print r,d,m
 
 
 def solve_game_df():
+    # to run this method we need to modify the max score to 100(check with self.win())
     ai_algo = Negamax(10, tt=TT())
     game = Gomoku_Strategic([Human_Player(), AI_Player(ai_algo)], 5)
     result = df_solve(game, win_score=100, maxdepth=10, tt=TT(), depth=0)
@@ -337,35 +380,6 @@ def play_game_transposition_table():
         print("Player %d wins!" % game.nopponent)
     else:
         print("Draw!")
-from copy import deepcopy
-class AI_Player_Iterative_Deepening:
-    """
-    Class for an AI player. This class must be initialized with an
-    AI algortihm, like ``AI_Player( Negamax(9) )``
-    """
-
-    def __init__(self, timeout=5, name='AI_iterative'):
-        self.name = name
-        self.move = {}
-        self.tt = TT()
-        self.timeout = timeout
-
-
-    def ask_move(self, game):
-        self.max_time = time.time() + self.timeout
-        last = game.possible_moves()[0]
-        game2 = deepcopy(game)
-        for depth in range(1, 6):
-            ai = Negamax_Iterative_Deepening(depth=depth, tt=self.tt)
-            game_last = game
-            result = ai(game2, timeout = self.max_time)
-            if result != 9999:
-                last = result
-                game = game_last
-            else:
-                break
-            print("depth:%d" % depth)
-        return last
 
 
 def play_iterative_deepening(timeout = 5):
