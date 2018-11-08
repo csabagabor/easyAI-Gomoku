@@ -48,7 +48,8 @@ def negamax_iterative_deepening(game, depth, origDepth, scoring, alpha=+inf, bet
     if lookup != None:
         # Put the supposedly best move first in the list
         possible_moves = game.possible_moves()
-        possible_moves.remove(lookup['move'])
+        if lookup['move'] in possible_moves:
+            possible_moves.remove(lookup['move'])
         possible_moves = [lookup['move']] + possible_moves
 
     else:
@@ -78,7 +79,7 @@ def negamax_iterative_deepening(game, depth, origDepth, scoring, alpha=+inf, bet
         ########
 
         move_alpha = - negamax_iterative_deepening(game, depth - 1, origDepth, scoring,
-                               -beta, -alpha, tt,timeout)
+                               -beta, -alpha, tt, timeout)
 
         ########
         if move_alpha == -9999:
