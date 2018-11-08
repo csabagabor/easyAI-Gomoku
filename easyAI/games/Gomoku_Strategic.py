@@ -337,7 +337,7 @@ def play_game_transposition_table():
         print("Player %d wins!" % game.nopponent)
     else:
         print("Draw!")
-
+from copy import deepcopy
 class AI_Player_Iterative_Deepening:
     """
     Class for an AI player. This class must be initialized with an
@@ -354,10 +354,11 @@ class AI_Player_Iterative_Deepening:
     def ask_move(self, game):
         self.max_time = time.time() + self.timeout
         last = game.possible_moves()[0]
-        for depth in range(1, 10):
+        game2 = deepcopy(game)
+        for depth in range(1, 6):
             ai = Negamax_Iterative_Deepening(depth=depth, tt=self.tt)
             game_last = game
-            result = ai(game_last, timeout = self.max_time)
+            result = ai(game2, timeout = self.max_time)
             if result != 9999:
                 last = result
                 game = game_last
