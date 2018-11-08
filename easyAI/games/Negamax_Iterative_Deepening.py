@@ -73,12 +73,17 @@ def negamax_iterative_deepening(game, depth, origDepth, scoring, alpha=+inf, bet
 
         #######check timeout
         if time.time() > timeout:
-            pass
+            return 9999
 
         ########
 
         move_alpha = - negamax_iterative_deepening(game, depth - 1, origDepth, scoring,
                                -beta, -alpha, tt,timeout)
+
+        ########
+        if move_alpha == -9999:
+            return 9999
+        ########
 
         if unmake_move:
             game.switch_player()
@@ -172,4 +177,7 @@ class Negamax_Iterative_Deepening:
 
         self.alpha = negamax_iterative_deepening(game, self.depth, self.depth, scoring,
                              -self.win_score, +self.win_score, self.tt, timeout)
+        if self.alpha == 9999:
+            return 9999
+
         return game.ai_move
