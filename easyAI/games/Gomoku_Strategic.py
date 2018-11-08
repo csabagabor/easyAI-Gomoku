@@ -2,8 +2,8 @@ from easyAI import TwoPlayersGame, id_solve, df_solve
 from easyAI.Player import Human_Player
 from games.Negamax_Iterative_Deepening import Negamax_Iterative_Deepening
 from collections import OrderedDict
-import enum
 import time
+from copy import deepcopy
 
 try:
     from colorama import init
@@ -18,12 +18,6 @@ try:
 except ImportError:
     print("Sorry, this example requires Numpy installed !")
     raise
-
-class Threat(enum.Enum):
-    open_three = 1
-    closed_three = 2
-    open_four = 3
-    closed_four = 4
 
 class Gomoku_Strategic(TwoPlayersGame):
     """ The board positions are numbered as follows:
@@ -337,36 +331,9 @@ def play_game_transposition_table():
         print("Player %d wins!" % game.nopponent)
     else:
         print("Draw!")
-from copy import deepcopy
-class AI_Player_Iterative_Deepening:
-    """
-    Class for an AI player. This class must be initialized with an
-    AI algortihm, like ``AI_Player( Negamax(9) )``
-    """
-
-    def __init__(self, timeout=5, name='AI_iterative'):
-        self.name = name
-        self.move = {}
-        self.tt = TT()
-        self.timeout = timeout
 
 
-    def ask_move(self, game):
-        self.max_time = time.time() + self.timeout
-        last = game.possible_moves()[0]
-        game2 = deepcopy(game)
-        for depth in range(1, 6):
-            ai = Negamax_Iterative_Deepening(depth=depth, tt=self.tt)
-            game_last = game
-            result = ai(game2, timeout = self.max_time)
-            if result != 9999:
-                last = result
-                game = game_last
-            else:
-                break
-            print("depth:%d" % depth)
-        return last
-
+from games.AI_Player_Iterative_Deepening import AI_Player_Iterative_Deepening
 
 def play_iterative_deepening(timeout = 5):
     game = Gomoku_Strategic([Human_Player(), AI_Player_Iterative_Deepening(timeout=timeout)], 6)
