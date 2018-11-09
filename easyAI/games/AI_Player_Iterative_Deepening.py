@@ -20,7 +20,7 @@ class AI_Player_Iterative_Deepening:
         self.max_time = time.time() + self.timeout
         last = game.possible_moves()[0]
         game_copy = deepcopy(game)
-        for depth in range(1, 20):
+        for depth in range(1, 2):
             ai = Negamax_Iterative_Deepening(depth=depth, tt=self.tt)
             result = ai(game_copy, timeout=self.max_time)
             if result != 9999:
