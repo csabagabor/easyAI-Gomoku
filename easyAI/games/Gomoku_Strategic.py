@@ -396,7 +396,7 @@ if __name__ == "__main__":
 
     #play_game_simple()
     #play_game_transposition_table()
-    play_iterative_deepening(timeout=5)
+    play_iterative_deepening(timeout=1)
     #solve_game()
     #solve_game_df()
 
