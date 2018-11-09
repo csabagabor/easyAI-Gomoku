@@ -29,6 +29,7 @@ class Gomoku_Strategic(TwoPlayersGame):
             raise ValueError('size should be less than 10')
         self.players = players
         self.total_moves = size*size
+        self.haslost = None
         self.size = size
         self.board = np.array([[0 for i in range(self.size)] for j in range(self.size)])
         self.nplayer = 1  # player 1 starts.
@@ -77,6 +78,7 @@ class Gomoku_Strategic(TwoPlayersGame):
         return possible_moves
 
     def make_move(self, move):
+        self.haslost = None
         self.total_moves -= 1
         coords = self.get_coords_from_move(move)
         row = coords[0]
@@ -91,6 +93,7 @@ class Gomoku_Strategic(TwoPlayersGame):
         return [row, column]
 
     def unmake_move(self, move):  # optional method (speeds up the AI)
+        self.haslost = None
         self.total_moves += 1
         coords = self.get_coords_from_move(move)
         row = coords[0]
@@ -100,7 +103,8 @@ class Gomoku_Strategic(TwoPlayersGame):
         self.last_move_y = -1
 
     def lose(self):
-        """ Has the opponent "five in line ?" """
+        if self.haslost != None:
+            return self.haslost
         self.haslost = self.find_five(self.nopponent)
         return self.haslost
 
@@ -399,7 +403,7 @@ if __name__ == "__main__":
 
     #play_game_simple()
     #play_game_transposition_table()
-    play_iterative_deepening(timeout=1000)
+    play_iterative_deepening(timeout=1)
     #solve_game()
     #solve_game_df()
 
