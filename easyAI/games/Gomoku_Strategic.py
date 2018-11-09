@@ -92,6 +92,9 @@ class Gomoku_Strategic(TwoPlayersGame):
         column = ord(move[1]) - ord('a')  # letter
         return [row, column]
 
+    def coords_to_move(self,x,y):
+        return str(y) + chr(x + ord('a'))
+
     def unmake_move(self, move):  # optional method (speeds up the AI)
         self.haslost = None
         self.total_moves += 1
@@ -169,6 +172,35 @@ class Gomoku_Strategic(TwoPlayersGame):
             if five in diagonal:
                 return True
         return False
+
+    def certain_win(self, player=1):
+        board = self.board
+        size = self.size
+        if player ==1:
+            nplayer = self.nplayer
+        else:
+            nplayer = self.nopponent
+        closed_four = str(nplayer)*4+"0"
+        closed_four2 = "0" + str(nplayer) * 4
+
+        for i in range(0, size):
+            row = ''.join([str(item) for item in board[i, :]])
+            pos = row.find(closed_four)
+            if pos > -1:
+                return True, self.coords_to_move(pos+4, i)
+            pos = row.find(closed_four2)
+            if pos > -1:
+                return True, self.coords_to_move(pos, i)
+        for j in range(0, size):
+            column = ''.join([str(item) for item in board[:, j]])
+            pos = column.find(closed_four)
+            if pos > -1:
+                return True, self.coords_to_move(j,pos+4)
+            pos = column.find(closed_four2)
+            if pos > -1:
+                return True, self.coords_to_move(j,pos)
+
+        return [False, None]
 
     def strategic_score(self, board, size, nplayer):
         threats = OrderedDict() #key - name of threat; value - (representation, score)
@@ -403,7 +435,7 @@ if __name__ == "__main__":
 
     #play_game_simple()
     #play_game_transposition_table()
-    play_iterative_deepening(timeout=1)
+    play_iterative_deepening(timeout=5000)
     #solve_game()
     #solve_game_df()
 

@@ -13,7 +13,19 @@ def negamax_iterative_deepening(game, depth, origDepth, scoring, alpha=+inf, bet
     This function is implemented (almost) acccording to
     http://en.wikipedia.org/wiki/Negamax
     """
+    ####################################################
+    #If there is a sure win/loose from one move, do not go deeper
+    if depth == origDepth:
+        win, move = game.certain_win(1)#current player (AI)
+        if move:
+            game.ai_move = move
+            return 100
+        win, move = game.certain_win(2)  #opponent
+        if move:
+            game.ai_move = move
+            return 100
 
+    ####################################################
     alphaOrig = alpha
 
     # Is there a transposition table and is this game in it ?
