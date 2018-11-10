@@ -29,5 +29,5 @@ def run_test(timeout):
 
 
 if __name__ == "__main__":
-    timeout = 5#5 seconds
+    timeout = 15#5 seconds
     run_test(timeout)

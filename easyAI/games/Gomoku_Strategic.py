@@ -44,19 +44,13 @@ class Gomoku_Strategic(TwoPlayersGame):
             self.ai_player = 1
         elif isinstance(players[1], AI_Player):
             self.ai_player = 2
-        self.board = np.array([[0, 0, 0, 0, 0, 0],
-                               [0, 1, 0, 0, 0, 0],
-                               [0, 1, 0, 0, 0, 0],
-                               [0, 1, 0, 0, 0, 0],
-                               [0, 0, 1, 1, 1, 0],
-                               [0, 0, 0, 0, 0, 0]])
         if init_board is not None:
             self.board = init_board
 
 
     def possible_moves(self):
         possible_moves = []
-        if self.ai_player == self.nplayer:#ai player moves - reduce set of possible moves for a faster AI
+        if self.ai_player == self.nplayer:#AI player moves - reduce set of possible moves for a faster AI
             for i in range(self.size):
                 for j in range(self.size):
                     if self.board[i, j] == 0:  # AI can move only to empty positions
