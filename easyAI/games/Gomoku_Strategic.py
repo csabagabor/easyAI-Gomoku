@@ -28,7 +28,6 @@ class Gomoku_Strategic(TwoPlayersGame):
         if size >= 10:
             raise ValueError('size should be less than 10')
         self.players = players
-        self.total_moves = size*size
         self.haslost = None
         self.size = size
         self.board = np.array([[0 for i in range(self.size)] for j in range(self.size)])
@@ -45,10 +44,10 @@ class Gomoku_Strategic(TwoPlayersGame):
             self.ai_player = 1
         elif isinstance(players[1], AI_Player):
             self.ai_player = 2
-        self.board = np.array([[2, 0, 2, 2, 0, 0],
-                               [0, 1, 0, 0, 0, 2],
-                               [0, 1, 1, 1, 1, 0],
-                               [0, 1, 0, 0, 0, 0],
+        self.board = np.array([[0, 0, 0, 0, 0, 0],
+                               [0, 0, 0, 0, 0, 0],
+                               [0, 0, 1, 1, 1, 1],
+                               [0, 0, 0, 0, 0, 0],
                                [2, 0, 2, 2, 2, 1],
                                [0, 0, 0, 0, 0, 1]])
 
@@ -84,9 +83,7 @@ class Gomoku_Strategic(TwoPlayersGame):
                             if j - 1 >= 0 and self.board[i - 1][j - 1] != 0:
                                 possible_moves.append(self.coords_to_move(j, i))
                                 continue
-            if self.total_moves == self.size * self.size:  # first move
-                possible_moves.append('0a')
-        else:
+        if possible_moves == []: # first move for AI OR other player
             for i in range(self.size):
                 for j in range(self.size):
                     if self.board[i, j] == 0:
@@ -94,7 +91,6 @@ class Gomoku_Strategic(TwoPlayersGame):
         return possible_moves
 
     def make_move(self, move):
-        self.total_moves -= 1
         coords = self.get_coords_from_move(move)
         row = coords[0]
         column = coords[1]
@@ -111,7 +107,6 @@ class Gomoku_Strategic(TwoPlayersGame):
         return str(y) + chr(x + ord('a'))
 
     def unmake_move(self, move):  # optional method (speeds up the AI)
-        self.total_moves += 1
         coords = self.get_coords_from_move(move)
         row = coords[0]
         column = coords[1]
@@ -124,7 +119,7 @@ class Gomoku_Strategic(TwoPlayersGame):
         return self.haslost
 
     def is_over(self):
-        return (self.total_moves == 0) or self.lose()
+        return (self.possible_moves() == []) or self.lose()
 
     def ttentry(self):
         return "".join([".0X"[i] for i in self.board.flatten()])
@@ -423,7 +418,7 @@ if __name__ == "__main__":
 
     #play_game_simple()
     #play_game_transposition_table()
-    play_iterative_deepening(timeout=5000)
+    play_iterative_deepening(timeout=5)
     #solve_game()
     #solve_game_df()
 
