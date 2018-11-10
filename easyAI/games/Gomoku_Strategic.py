@@ -45,11 +45,11 @@ class Gomoku_Strategic(TwoPlayersGame):
             self.ai_player = 1
         elif isinstance(players[1], AI_Player):
             self.ai_player = 2
-        self.board = np.array([[2, 2, 2, 2, 0, 0],
-                               [0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 1],
+        self.board = np.array([[2, 0, 2, 2, 0, 0],
+                               [0, 1, 0, 0, 0, 2],
+                               [0, 1, 1, 1, 1, 0],
+                               [0, 1, 0, 0, 0, 0],
+                               [2, 0, 2, 2, 2, 1],
                                [0, 0, 0, 0, 0, 1]])
 
     def possible_moves(self):
