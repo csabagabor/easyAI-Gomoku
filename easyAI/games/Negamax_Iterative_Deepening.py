@@ -49,10 +49,13 @@ def negamax_iterative_deepening(game, depth, origDepth, scoring, alpha=+inf, bet
     if depth == 0:
         score = scoring(game)
         if 80 <= abs(score) < 100:#very good move - need to figure it out deeper
+            print "negamax - lowest depth + 3"
             depth = -7 # go 3 levels deeper with this move
         elif 70 <= abs(score) < 80:
+            print "negamax - lowest depth + 2"
             depth = -8 # go 2 levels deeper with this move
         elif 50 <= abs(score) < 70:
+            print "negamax - lowest depth + 1"
             depth = -9 # go 1 level deeper with this move
         elif score == 0:
             return score

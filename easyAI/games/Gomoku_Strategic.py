@@ -381,9 +381,9 @@ def solve_game_df():
     print result
 
 
-def play_game_simple():
+def play_game_simple(size = 6):
     ai_algo = Negamax(4)
-    game = Gomoku_Strategic([Human_Player(), AI_Player(ai_algo)], 6)
+    game = Gomoku_Strategic([Human_Player(), AI_Player(ai_algo)], size)
     game.play()
     if game.lose():
         print("Player %d wins!" % game.nopponent)
@@ -391,9 +391,9 @@ def play_game_simple():
         print("Draw!")
 
 
-def play_game_transposition_table():
+def play_game_transposition_table(size = 6):
     ai_algo = Negamax(4, tt = TT())
-    game = Gomoku_Strategic([Human_Player(), AI_Player(ai_algo)], 6)
+    game = Gomoku_Strategic([Human_Player(), AI_Player(ai_algo)], size)
     game.play()
     if game.lose():
         print("Player %d wins!" % game.nopponent)
@@ -401,8 +401,8 @@ def play_game_transposition_table():
         print("Draw!")
 
 
-def play_iterative_deepening(timeout = 5):
-    game = Gomoku_Strategic([Human_Player(), AI_Player_Iterative_Deepening(timeout=timeout)], 6)
+def play_iterative_deepening(size = 6, timeout = 5):
+    game = Gomoku_Strategic([Human_Player(), AI_Player_Iterative_Deepening(timeout=timeout)], size)
     game.play()
     if game.lose():
         print("Player %d wins!" % game.nopponent)
@@ -413,9 +413,9 @@ def play_iterative_deepening(timeout = 5):
 if __name__ == "__main__":
     from easyAI import AI_Player, Negamax, SSS, DUAL, TT
 
-    #play_game_simple()
-    #play_game_transposition_table()
-    play_iterative_deepening(timeout=500)
+    #play_game_simple(size = 6)
+    #play_game_transposition_table(size = 6)
+    play_iterative_deepening(size=7, timeout=1)
     #solve_game()
     #solve_game_df()
 

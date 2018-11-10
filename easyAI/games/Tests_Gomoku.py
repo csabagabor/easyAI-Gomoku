@@ -7,19 +7,41 @@ except ImportError:
     raise
 from easyAI import Human_Player
 
-def test1():
-    board = np.array([[0, 0, 0, 0, 0, 0],
-                      [0, 2, 0, 0, 0, 0],
-                      [0, 2, 0, 0, 0, 0],
-                      [0, 2, 0, 0, 0, 0],
-                      [0, 0, 2, 2, 2, 0],
-                      [0, 0, 0, 0, 0, 0]])
+def test(nr):
+    board = {}
+    board["1"] = np.array([[0, 0, 0, 0, 0, 0],
+                          [0, 2, 0, 0, 0, 0],
+                          [0, 2, 0, 0, 0, 0],
+                          [0, 2, 0, 0, 0, 0],
+                          [0, 0, 2, 2, 2, 0],
+                          [0, 0, 0, 0, 0, 0]])
 
-    return board
+    board["2"] = np.array([[2, 2, 2, 2, 0, 0],
+                           [1, 1, 2, 0, 0, 0],
+                           [1, 1, 2, 0, 0, 0],
+                           [1, 1, 1, 2, 0, 0],
+                           [2, 0, 0, 0, 2, 0],
+                           [1, 1, 0, 0, 0, 0]])
+
+    board["3"] = np.array([[1, 1, 1, 1, 0, 0],
+                           [2, 2, 1, 0, 0, 0],
+                           [2, 2, 1, 0, 0, 0],
+                           [2, 2, 2, 1, 0, 0],
+                           [1, 0, 0, 0, 1, 0],
+                           [2, 2, 0, 0, 0, 0]])
+
+    board["4"] = np.array([[2, 0, 0, 0, 0, 0],
+                           [0, 2, 1, 2, 0, 0],
+                           [0, 0, 1, 0, 0, 0],
+                           [2, 0, 1, 2, 0, 0],
+                           [1, 2, 1, 1, 1, 0],
+                           [2, 2, 2, 0, 0, 0]])
+
+    return board[str(nr)]
 
 
-def run_test(timeout):
-    board = test1()
+def run_test(nr=1, timeout=5):
+    board = test(nr)
     game = Gomoku_Strategic([AI_Player_Iterative_Deepening(timeout=timeout), Human_Player()], 6, board)
     game.play()
     if game.lose():
@@ -30,4 +52,4 @@ def run_test(timeout):
 
 if __name__ == "__main__":
     timeout = 15#5 seconds
-    run_test(timeout)
+    run_test(4, timeout)
