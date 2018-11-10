@@ -367,14 +367,12 @@ class Gomoku_Strategic(TwoPlayersGame):
 
 
 def solve_game():
-    #to run this method we need to modify the max score to 100(check with self.win())
     tt = TT()
     r, d, m = id_solve(Gomoku_Strategic, range(2, 20), win_score=100, tt=tt)
     print r,d,m
 
 
 def solve_game_df():
-    # to run this method we need to modify the max score to 100(check with self.win())
     ai_algo = Negamax(10, tt=TT())
     game = Gomoku_Strategic([Human_Player(), AI_Player(ai_algo)], 5)
     result = df_solve(game, win_score=100, maxdepth=10, tt=TT(), depth=0)
@@ -415,7 +413,7 @@ if __name__ == "__main__":
 
     #play_game_simple(size = 6)
     #play_game_transposition_table(size = 6)
-    play_iterative_deepening(size=9, timeout=1)
-    #solve_game()
+    #play_iterative_deepening(size=9, timeout=1)
+    solve_game()
     #solve_game_df()
 
