@@ -13,19 +13,6 @@ def negamax_iterative_deepening(game, depth, origDepth, scoring, alpha=+inf, bet
     This function is implemented (almost) acccording to
     http://en.wikipedia.org/wiki/Negamax
     """
-    ####################################################
-    #If there is a sure win/loose from one move, do not go deeper
-    if depth == origDepth:
-        win, move = game.certain_win(1)#current player (AI)
-        if move:
-            game.ai_move = move
-            return 100
-        win, move = game.certain_win(2)  #opponent
-        if move:
-            game.ai_move = move
-            return 100
-
-    ####################################################
     alphaOrig = alpha
 
     # Is there a transposition table and is this game in it ?
@@ -84,19 +71,8 @@ def negamax_iterative_deepening(game, depth, origDepth, scoring, alpha=+inf, bet
         game.make_move(move)
         game.switch_player()
 
-        #######check timeout
-        if time.time() > timeout:
-            return 9999
-
-        ########
-
         move_alpha = - negamax_iterative_deepening(game, depth - 1, origDepth, scoring,
                                -beta, -alpha, tt, timeout)
-
-        ########
-        if move_alpha == -9999:
-            return 9999
-        ########
 
         if unmake_move:
             game.switch_player()
@@ -114,6 +90,11 @@ def negamax_iterative_deepening(game, depth, origDepth, scoring, alpha=+inf, bet
                 state.ai_move = move
             if (alpha >= beta):
                 break
+
+        ########
+        if time.time() > timeout:
+            return bestValue
+        ########
 
     if tt != None:
         assert best_move in possible_moves
@@ -190,7 +171,5 @@ class Negamax_Iterative_Deepening:
 
         self.alpha = negamax_iterative_deepening(game, self.depth, self.depth, scoring,
                              -self.win_score, +self.win_score, self.tt, timeout)
-        if self.alpha == 9999:
-            return 9999
 
-        return game.ai_move
+        return game.ai_move, self.alpha

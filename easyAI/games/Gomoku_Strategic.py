@@ -32,6 +32,14 @@ class Gomoku_Strategic(TwoPlayersGame):
         self.haslost = None
         self.size = size
         self.board = np.array([[0 for i in range(self.size)] for j in range(self.size)])
+
+        self.board = np.array([[2, 2, 0, 0, 0, 0],
+                               [0, 1, 1, 1, 0, 0],
+                               [0, 0, 0, 0, 0, 1],
+                               [0, 0, 0, 0, 0, 1],
+                               [0, 0, 0, 0, 0, 1],
+                               [0, 0, 0, 0, 0, 1]])
+
         self.nplayer = 1  # player 1 starts.
         self.last_move_x = -1
         self.last_move_y = -1
@@ -51,24 +59,34 @@ class Gomoku_Strategic(TwoPlayersGame):
         if self.ai_player == self.nplayer:#ai player moves - reduce set of possible moves for a faster AI
             for i in range(self.size):
                 for j in range(self.size):
-                    if self.board[i, j] != 0:#AI can move only to positions which are adjacent to non-empty cells
-                        if j+1 < self.size and self.board[i][j+1] == 0:
-                            possible_moves.append(str(i) + chr(j + 1 + ord('a')))
-                        if j-1 >= 0 and self.board[i][j-1] == 0:
-                            possible_moves.append(str(i) + chr(j - 1 + ord('a')))
-                        if i+1 < self.size and self.board[i+1][j] == 0:
-                            possible_moves.append(str(i+1) + chr(j + ord('a')))
-                            if j + 1 < self.size and self.board[i+1][j+1] == 0:
-                                possible_moves.append(str(i + 1) + chr(j + 1 + ord('a')))
-                            if j - 1 >= 0 and self.board[i+1][j-1] == 0:
-                                possible_moves.append(str(i + 1) + chr(j - 1 + ord('a')))
-                        if i-1 >= 0 and self.board[i-1][j] == 0:
-                            possible_moves.append(str(i-1) + chr(j + ord('a')))
-                            if j + 1 < self.size and self.board[i-1][j+1] == 0:
-                                possible_moves.append(str(i - 1) + chr(j + 1 + ord('a')))
-                            if j - 1 >= 0 and self.board[i-1][j-1] == 0:
-                                possible_moves.append(str(i - 1) + chr(j - 1 + ord('a')))
-            if possible_moves == []:#first move
+                    if self.board[i, j] == 0:#AI can move only to empty positions
+                        if j+1 < self.size and self.board[i][j+1] != 0: #AI can move only to positions which have non-empty neighbours - faster AI
+                            possible_moves.append(self.coords_to_move(j, i))
+                            continue
+                        if j-1 >= 0 and self.board[i][j-1] != 0:
+                            possible_moves.append(self.coords_to_move(j, i))
+                            continue
+                        if i+1 < self.size:
+                            if self.board[i+1][j] != 0:
+                                possible_moves.append(self.coords_to_move(j, i))
+                                continue
+                            if j + 1 < self.size and self.board[i+1][j+1] != 0:
+                                possible_moves.append(self.coords_to_move(j, i))
+                                continue
+                            if j - 1 >= 0 and self.board[i+1][j-1] != 0:
+                                possible_moves.append(self.coords_to_move(j, i))
+                                continue
+                        if i-1 >= 0:
+                            if self.board[i-1][j] != 0:
+                                possible_moves.append(self.coords_to_move(j, i))
+                                continue
+                            if j + 1 < self.size and self.board[i-1][j+1] != 0:
+                                possible_moves.append(self.coords_to_move(j, i))
+                                continue
+                            if j - 1 >= 0 and self.board[i-1][j-1] != 0:
+                                possible_moves.append(self.coords_to_move(j, i))
+                                continue
+            if self.total_moves == self.size*self.size:#first move
                 possible_moves.append('0a')
         else:
             for i in range(self.size):

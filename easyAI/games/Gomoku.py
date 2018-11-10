@@ -33,6 +33,12 @@ class Gomoku(TwoPlayersGame):
         self.nplayer = 1  # player 1 starts.
         self.last_move_x = -1
         self.last_move_y = -1
+        self.board = np.array([[2, 2, 0, 0, 0, 0],
+                               [0, 1, 1, 1, 0, 0],
+                               [0, 0, 0, 0, 0, 1],
+                               [0, 0, 0, 0, 0, 1],
+                               [0, 0, 0, 0, 0, 1],
+                               [0, 0, 0, 0, 0, 1]])
 
     def possible_moves(self):
         possible_moves = []
@@ -271,7 +277,7 @@ def play_game_simple():
 
 
 def play_game_transposition_table():
-    ai_algo = Negamax(5, tt = TT())
+    ai_algo = Negamax(2, tt = TT())
     game = Gomoku([Human_Player(), AI_Player(ai_algo)], 6)
     game.play()
     if game.lose():
