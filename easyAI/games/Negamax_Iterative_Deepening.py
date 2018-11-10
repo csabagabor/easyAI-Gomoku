@@ -36,7 +36,7 @@ def negamax_iterative_deepening(game, depth, origDepth, scoring, alpha=+inf, bet
                 if depth == origDepth:
                     game.ai_move = lookup['move']
                 return value
-
+        ################################################################
     if (depth == -10) or game.is_over():
         "depth == -10 if a particular move was"
         "repeated, don't want to repeat it again -->> infinite recursion"
@@ -69,6 +69,8 @@ def negamax_iterative_deepening(game, depth, origDepth, scoring, alpha=+inf, bet
                 return score
             else:
                 return (score - 0.01 * depth * abs(score) / score)
+
+    ################################################################
     if lookup != None:
         # Put the supposedly best move first in the list
         possible_moves = game.possible_moves()

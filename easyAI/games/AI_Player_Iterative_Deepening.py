@@ -33,7 +33,7 @@ class AI_Player_Iterative_Deepening:
                 return move
             if alpha != None:
                 last = move
-                print Fore.BLUE + ("depth:%d move %s" % (depth, move)) + Style.RESET_ALL
+                print Fore.BLUE + ("depth:%d move %s alpha %s" % (depth, move, alpha)) + Style.RESET_ALL
             else:
                 break
         return last
