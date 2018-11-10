@@ -24,10 +24,11 @@ class Gomoku_Strategic(TwoPlayersGame):
             6 7 8
     """
 
-    def __init__(self, players, size=9):
+    def __init__(self, players, size=9, init_board = None):
         if size >= 10:
             raise ValueError('size should be less than 10')
         self.players = players
+        self.haslost = None
         self.size = size
         self.board = np.array([[0 for i in range(self.size)] for j in range(self.size)])
         self.nplayer = 1  # player 1 starts.
@@ -43,32 +44,43 @@ class Gomoku_Strategic(TwoPlayersGame):
             self.ai_player = 1
         elif isinstance(players[1], AI_Player):
             self.ai_player = 2
+        if init_board is not None:
+            self.board = init_board
+
 
     def possible_moves(self):
         possible_moves = []
-        if self.ai_player == self.nplayer:#ai player moves - reduce set of possible moves for a faster AI
+        if self.ai_player == self.nplayer:#AI player moves - reduce set of possible moves for a faster AI
             for i in range(self.size):
                 for j in range(self.size):
-                    if self.board[i, j] != 0:#AI can move only to positions which are adjacent to non-empty cells
-                        if j+1 < self.size and self.board[i][j+1] == 0:
-                            possible_moves.append(str(i) + chr(j + 1 + ord('a')))
-                        if j-1 >= 0 and self.board[i][j-1] == 0:
-                            possible_moves.append(str(i) + chr(j - 1 + ord('a')))
-                        if i+1 < self.size and self.board[i+1][j] == 0:
-                            possible_moves.append(str(i+1) + chr(j + ord('a')))
-                            if j + 1 < self.size and self.board[i+1][j+1] == 0:
-                                possible_moves.append(str(i + 1) + chr(j + 1 + ord('a')))
-                            if j - 1 >= 0 and self.board[i+1][j-1] == 0:
-                                possible_moves.append(str(i + 1) + chr(j - 1 + ord('a')))
-                        if i-1 >= 0 and self.board[i-1][j] == 0:
-                            possible_moves.append(str(i-1) + chr(j + ord('a')))
-                            if j + 1 < self.size and self.board[i-1][j+1] == 0:
-                                possible_moves.append(str(i - 1) + chr(j + 1 + ord('a')))
-                            if j - 1 >= 0 and self.board[i-1][j-1] == 0:
-                                possible_moves.append(str(i - 1) + chr(j - 1 + ord('a')))
-            if possible_moves == []:#first move
-                possible_moves.append('0a')
-        else:
+                    if self.board[i, j] == 0:  # AI can move only to empty positions
+                        if j + 1 < self.size and self.board[i][j + 1] != 0:  # AI can move only to positions which have non-empty neighbours - faster AI
+                            possible_moves.append(self.coords_to_move(j, i))
+                            continue
+                        if j - 1 >= 0 and self.board[i][j - 1] != 0:
+                            possible_moves.append(self.coords_to_move(j, i))
+                            continue
+                        if i + 1 < self.size:
+                            if self.board[i + 1][j] != 0:
+                                possible_moves.append(self.coords_to_move(j, i))
+                                continue
+                            if j + 1 < self.size and self.board[i + 1][j + 1] != 0:
+                                possible_moves.append(self.coords_to_move(j, i))
+                                continue
+                            if j - 1 >= 0 and self.board[i + 1][j - 1] != 0:
+                                possible_moves.append(self.coords_to_move(j, i))
+                                continue
+                        if i - 1 >= 0:
+                            if self.board[i - 1][j] != 0:
+                                possible_moves.append(self.coords_to_move(j, i))
+                                continue
+                            if j + 1 < self.size and self.board[i - 1][j + 1] != 0:
+                                possible_moves.append(self.coords_to_move(j, i))
+                                continue
+                            if j - 1 >= 0 and self.board[i - 1][j - 1] != 0:
+                                possible_moves.append(self.coords_to_move(j, i))
+                                continue
+        if possible_moves == []: # first move for AI OR other player
             for i in range(self.size):
                 for j in range(self.size):
                     if self.board[i, j] == 0:
@@ -88,6 +100,9 @@ class Gomoku_Strategic(TwoPlayersGame):
         column = ord(move[1]) - ord('a')  # letter
         return [row, column]
 
+    def coords_to_move(self,x,y):
+        return str(y) + chr(x + ord('a'))
+
     def unmake_move(self, move):  # optional method (speeds up the AI)
         coords = self.get_coords_from_move(move)
         row = coords[0]
@@ -97,7 +112,6 @@ class Gomoku_Strategic(TwoPlayersGame):
         self.last_move_y = -1
 
     def lose(self):
-        """ Has the opponent "five in line ?" """
         self.haslost = self.find_five(self.nopponent)
         return self.haslost
 
@@ -137,7 +151,11 @@ class Gomoku_Strategic(TwoPlayersGame):
         elif self.lose():
                 return -100
         strategic_score = self.strategic_score(self.board, self.size, self.nplayer)
+        if strategic_score > 100000:
+            return 100
         strategic_score -= 1.2*self.strategic_score(self.board, self.size, self.nopponent)
+        if strategic_score < -100000:
+            return -100
         if strategic_score > 0:
             return 0
         if strategic_score < -90:
@@ -166,7 +184,8 @@ class Gomoku_Strategic(TwoPlayersGame):
     def strategic_score(self, board, size, nplayer):
         threats = OrderedDict() #key - name of threat; value - (representation, score)
         # !!!! order of items is important
-        threats['open_four'] = ("0"+str(nplayer)*4+"0", 100) #certain loose/win
+        threats['five'] = (str(nplayer) * 5, 100000)  # certain loose/win
+        threats['open_four'] = ("0"+str(nplayer)*4+"0", 90) #certain loose/win
         threats['open_three'] = ("0"+str(nplayer)*3+"0", 25)
         threats['closed_four'] = (str(nplayer)*4+"0", 30)
         threats['closed_four2'] = ("0" + str(nplayer) * 4, 30)
@@ -362,9 +381,9 @@ def solve_game_df():
     print result
 
 
-def play_game_simple():
+def play_game_simple(size = 6):
     ai_algo = Negamax(4)
-    game = Gomoku_Strategic([Human_Player(), AI_Player(ai_algo)], 6)
+    game = Gomoku_Strategic([Human_Player(), AI_Player(ai_algo)], size)
     game.play()
     if game.lose():
         print("Player %d wins!" % game.nopponent)
@@ -372,9 +391,9 @@ def play_game_simple():
         print("Draw!")
 
 
-def play_game_transposition_table():
+def play_game_transposition_table(size = 6):
     ai_algo = Negamax(4, tt = TT())
-    game = Gomoku_Strategic([Human_Player(), AI_Player(ai_algo)], 6)
+    game = Gomoku_Strategic([Human_Player(), AI_Player(ai_algo)], size)
     game.play()
     if game.lose():
         print("Player %d wins!" % game.nopponent)
@@ -382,8 +401,8 @@ def play_game_transposition_table():
         print("Draw!")
 
 
-def play_iterative_deepening(timeout = 5):
-    game = Gomoku_Strategic([Human_Player(), AI_Player_Iterative_Deepening(timeout=timeout)], 6)
+def play_iterative_deepening(size = 6, timeout = 5):
+    game = Gomoku_Strategic([Human_Player(), AI_Player_Iterative_Deepening(timeout=timeout)], size)
     game.play()
     if game.lose():
         print("Player %d wins!" % game.nopponent)
@@ -394,9 +413,9 @@ def play_iterative_deepening(timeout = 5):
 if __name__ == "__main__":
     from easyAI import AI_Player, Negamax, SSS, DUAL, TT
 
-    #play_game_simple()
-    #play_game_transposition_table()
-    play_iterative_deepening(timeout=5)
+    #play_game_simple(size = 6)
+    #play_game_transposition_table(size = 6)
+    play_iterative_deepening(size=9, timeout=1)
     #solve_game()
     #solve_game_df()
 

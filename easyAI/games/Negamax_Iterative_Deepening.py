@@ -13,7 +13,6 @@ def negamax_iterative_deepening(game, depth, origDepth, scoring, alpha=+inf, bet
     This function is implemented (almost) acccording to
     http://en.wikipedia.org/wiki/Negamax
     """
-
     alphaOrig = alpha
 
     # Is there a transposition table and is this game in it ?
@@ -38,13 +37,38 @@ def negamax_iterative_deepening(game, depth, origDepth, scoring, alpha=+inf, bet
                     game.ai_move = lookup['move']
                 return value
 
-    if (depth == 0) or game.is_over():
+    if (depth == -10) or game.is_over():
+        "depth == -10 if a particular move was"
+        "repeated, don't want to repeat it again -->> infinite recursion"
         score = scoring(game)
         if score == 0:
             return score
         else:
             return (score - 0.01 * depth * abs(score) / score)
 
+    if depth == 0:
+        score = scoring(game)
+        how_deep = 0
+        if 50 <= abs(score) < 100:
+            max_depth = int(origDepth/2) + 1
+            if max_depth > 5:
+                max_depth = 5
+
+            if 80 <= abs(score) < 100:#very good move - need to figure it out deeper
+                how_deep = max_depth * 1
+            elif 70 <= abs(score) < 80:
+                how_deep = int(max_depth * 0.7)
+            else:#because of first if clause
+                how_deep = int(max_depth * 0.4)
+
+        if how_deep > 0:
+            print "negamax - lowest depth + %d" % how_deep
+            depth = -10 + how_deep
+        else:
+            if score == 0:
+                return score
+            else:
+                return (score - 0.01 * depth * abs(score) / score)
     if lookup != None:
         # Put the supposedly best move first in the list
         possible_moves = game.possible_moves()
@@ -72,19 +96,12 @@ def negamax_iterative_deepening(game, depth, origDepth, scoring, alpha=+inf, bet
         game.make_move(move)
         game.switch_player()
 
-        #######check timeout
-        if time.time() > timeout:
-            return 9999
-
-        ########
-
-        move_alpha = - negamax_iterative_deepening(game, depth - 1, origDepth, scoring,
+        move_alpha = negamax_iterative_deepening(game, depth - 1, origDepth, scoring,
                                -beta, -alpha, tt, timeout)
 
-        ########
-        if move_alpha == -9999:
-            return 9999
-        ########
+        if move_alpha == None:
+            return None
+        move_alpha = -move_alpha
 
         if unmake_move:
             game.switch_player()
@@ -102,6 +119,11 @@ def negamax_iterative_deepening(game, depth, origDepth, scoring, alpha=+inf, bet
                 state.ai_move = move
             if (alpha >= beta):
                 break
+
+        #######check timeout
+        if time.time() > timeout:
+            return None
+        ########
 
     if tt != None:
         assert best_move in possible_moves
@@ -178,7 +200,5 @@ class Negamax_Iterative_Deepening:
 
         self.alpha = negamax_iterative_deepening(game, self.depth, self.depth, scoring,
                              -self.win_score, +self.win_score, self.tt, timeout)
-        if self.alpha == 9999:
-            return 9999
 
-        return game.ai_move
+        return game.ai_move, self.alpha

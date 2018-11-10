@@ -2,7 +2,13 @@ from games.Negamax_Iterative_Deepening import Negamax_Iterative_Deepening
 from copy import deepcopy
 import time
 from easyAI import TT
-
+try:
+    from colorama import init
+    init()
+    from colorama import Fore, Back, Style
+except ImportError:
+    print("Sorry, this example requires Colorama installed !")
+    raise
 
 class AI_Player_Iterative_Deepening:
     """
@@ -22,10 +28,12 @@ class AI_Player_Iterative_Deepening:
         game_copy = deepcopy(game)
         for depth in range(1, 20):
             ai = Negamax_Iterative_Deepening(depth=depth, tt=self.tt)
-            result = ai(game_copy, timeout=self.max_time)
-            if result != 9999:
-                last = result
+            move, alpha = ai(game_copy, timeout=self.max_time)
+            if depth == 1 and alpha == 100:  # can win with first move
+                return move
+            if alpha != None:
+                last = move
+                print Fore.BLUE + ("depth:%d move %s" % (depth, move)) + Style.RESET_ALL
             else:
                 break
-            print("depth:%d" % depth)
         return last
