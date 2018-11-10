@@ -52,4 +52,4 @@ def run_test(nr=1, timeout=5):
 
 if __name__ == "__main__":
     timeout = 15#5 seconds
-    run_test(4, timeout)
+    run_test(1, timeout)
