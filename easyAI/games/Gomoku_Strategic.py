@@ -45,6 +45,12 @@ class Gomoku_Strategic(TwoPlayersGame):
             self.ai_player = 1
         elif isinstance(players[1], AI_Player):
             self.ai_player = 2
+        self.board = np.array([[2, 2, 0, 0, 0, 0],
+                               [0, 1, 1, 1, 0, 0],
+                               [0, 0, 0, 0, 0, 1],
+                               [0, 0, 0, 0, 0, 1],
+                               [0, 0, 0, 0, 0, 1],
+                               [0, 0, 0, 0, 0, 1]])
 
     def possible_moves(self):
         possible_moves = []
@@ -78,7 +84,6 @@ class Gomoku_Strategic(TwoPlayersGame):
         return possible_moves
 
     def make_move(self, move):
-        self.haslost = None
         self.total_moves -= 1
         coords = self.get_coords_from_move(move)
         row = coords[0]
@@ -96,7 +101,6 @@ class Gomoku_Strategic(TwoPlayersGame):
         return str(y) + chr(x + ord('a'))
 
     def unmake_move(self, move):  # optional method (speeds up the AI)
-        self.haslost = None
         self.total_moves += 1
         coords = self.get_coords_from_move(move)
         row = coords[0]
@@ -106,8 +110,6 @@ class Gomoku_Strategic(TwoPlayersGame):
         self.last_move_y = -1
 
     def lose(self):
-        if self.haslost != None:
-            return self.haslost
         self.haslost = self.find_five(self.nopponent)
         return self.haslost
 
