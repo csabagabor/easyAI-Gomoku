@@ -101,8 +101,6 @@ def negamax_iterative_deepening(game, depth, origDepth, scoring, alpha=+inf, bet
         move_alpha = negamax_iterative_deepening(game, depth - 1, origDepth, scoring,
                                -beta, -alpha, tt, timeout)
 
-        if move_alpha == None:
-            return None
         move_alpha = -move_alpha
 
         if unmake_move:
@@ -124,7 +122,7 @@ def negamax_iterative_deepening(game, depth, origDepth, scoring, alpha=+inf, bet
 
         #######check timeout
         if time.time() > timeout:
-            return None
+            return bestValue
         ########
 
     if tt != None:

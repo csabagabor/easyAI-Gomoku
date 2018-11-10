@@ -26,14 +26,20 @@ class AI_Player_Iterative_Deepening:
         self.max_time = time.time() + self.timeout
         last = game.possible_moves()[0]
         game_copy = deepcopy(game)
+        max_alpha = 0
         for depth in range(1, 20):
             ai = Negamax_Iterative_Deepening(depth=depth, tt=self.tt)
             move, alpha = ai(game_copy, timeout=self.max_time)
             if depth == 1 and alpha == 100:  # can win with first move
                 return move
-            if alpha != None:
+            if time.time() < self.max_time:
+                max_alpha = max(max_alpha, abs(alpha))
                 last = move
-                print Fore.BLUE + ("depth:%d move %s alpha %s" % (depth, move, alpha)) + Style.RESET_ALL
+                print Fore.BLUE + ("depth:%d move %s alpha %s max_alpha %d" % (depth, move, alpha, max_alpha)) + Style.RESET_ALL
             else:
+                if abs(alpha) > max_alpha:#even if depth was unfinished, the move is good
+                    last = move
+                    max_alpha = abs(alpha)
+                print Fore.RED + ("depth:%d move %s alpha %s max_alpha %d" % (depth, move, alpha, max_alpha)) + Style.RESET_ALL
                 break
         return last

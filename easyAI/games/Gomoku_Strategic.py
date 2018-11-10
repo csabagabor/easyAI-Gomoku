@@ -368,7 +368,7 @@ class Gomoku_Strategic(TwoPlayersGame):
 
 def solve_game():
     tt = TT()
-    r, d, m = id_solve(Gomoku_Strategic, range(2, 20), win_score=100, tt=tt)
+    r, d, m = id_solve(Gomoku_Strategic, range(2, 7), win_score=100, tt=tt)
     print r,d,m
 
 
@@ -413,7 +413,7 @@ if __name__ == "__main__":
 
     #play_game_simple(size = 6)
     #play_game_transposition_table(size = 6)
-    #play_iterative_deepening(size=9, timeout=1)
-    solve_game()
+    play_iterative_deepening(size=9, timeout=1)
+    #solve_game()
     #solve_game_df()
 
