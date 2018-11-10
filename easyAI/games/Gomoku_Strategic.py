@@ -24,7 +24,7 @@ class Gomoku_Strategic(TwoPlayersGame):
             6 7 8
     """
 
-    def __init__(self, players, size=9):
+    def __init__(self, players, size=9, init_board = None):
         if size >= 10:
             raise ValueError('size should be less than 10')
         self.players = players
@@ -45,11 +45,14 @@ class Gomoku_Strategic(TwoPlayersGame):
         elif isinstance(players[1], AI_Player):
             self.ai_player = 2
         self.board = np.array([[0, 0, 0, 0, 0, 0],
-                               [0, 0, 0, 0, 0, 0],
-                               [0, 0, 1, 1, 1, 1],
-                               [0, 0, 0, 0, 0, 0],
-                               [2, 0, 2, 2, 2, 1],
-                               [0, 0, 0, 0, 0, 1]])
+                               [0, 1, 0, 0, 0, 0],
+                               [0, 1, 0, 0, 0, 0],
+                               [0, 1, 0, 0, 0, 0],
+                               [0, 0, 1, 1, 1, 0],
+                               [0, 0, 0, 0, 0, 0]])
+        if init_board is not None:
+            self.board = init_board
+
 
     def possible_moves(self):
         possible_moves = []
@@ -418,7 +421,7 @@ if __name__ == "__main__":
 
     #play_game_simple()
     #play_game_transposition_table()
-    play_iterative_deepening(timeout=5)
+    play_iterative_deepening(timeout=500)
     #solve_game()
     #solve_game_df()
 
