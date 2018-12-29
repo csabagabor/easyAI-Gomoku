@@ -18,11 +18,6 @@ except ImportError:
 
 
 class Gomoku_optimized(TwoPlayersGame):
-    """ The board positions are numbered as follows:
-            0 1 2
-            3 4 5
-            6 7 8
-    """
 
     def __init__(self, players, size=9):
         if size >= 10:
