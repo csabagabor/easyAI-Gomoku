@@ -1,0 +1,3 @@
+LIBRARY find_five_cython.pyd
+EXPORTS
+initfind_five_cython
