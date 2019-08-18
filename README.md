@@ -32,7 +32,7 @@ Running the algorithms with transposition tables did not change the fact that Ne
 
 ![image](https://user-images.githubusercontent.com/37183688/63229209-c9a2e900-c206-11e9-8905-6403198f3175.png)
 
-Implementing just one heavily used function in Cython resulted in an improvement of 1525% optimization.
+Implementing just one heavily used function in Cython resulted in an improvement of 15-25% optimization.
 ![image](https://user-images.githubusercontent.com/37183688/63229214-d6274180-c206-11e9-879b-f9aba1287ad0.png)
 
 This is an overall comparison between the simple Negamax, the one with transposition table and the Cython version.
