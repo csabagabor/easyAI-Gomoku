@@ -18,6 +18,27 @@ This project tries contains an AI for the well-known game Gomoku(https://en.wiki
 - **Heuristic function**
 The AI is a defensive AI meaning that the same board position for the opponent means a higher score than the same position for the current player. Some positions which are examined are: open four, closed four, open three, closed three.
 - **Cython**
-- **SSS* **
+- **SSS algorithm**
+- **Alpha-Beta pruning**
+- **Transposition tables**
+
+# Graphs and experiments 
+
+About the simple implementation of Gomoku: I’ve tried the 3 diﬀerent AI algorithms the tool has. The documentation states that SSS* and Dual are faster than Negamax because they have more pruning. In my tests they came out to be somewhat slower and I have an idea why: the implementation of these 2 algorithms is more complex than Negamax and when there aren’t good heuristics used the branch rejection is not higher in SSS* and DUAL than in Negamax and because of the small overhead compared to Negamax, they are slower.  
+![image](https://user-images.githubusercontent.com/37183688/63229204-b728af80-c206-11e9-8f72-e5bbc9a87199.png)  
+
+
+Running the algorithms with transposition tables did not change the fact that Negamax was more eﬃcient. But the running time for all the 3 algorithms was improved by around 60%.
+
+![image](https://user-images.githubusercontent.com/37183688/63229209-c9a2e900-c206-11e9-8905-6403198f3175.png)
+
+Implementing just one heavily used function in Cython resulted in an improvement of 1525% optimization.
+![image](https://user-images.githubusercontent.com/37183688/63229214-d6274180-c206-11e9-879b-f9aba1287ad0.png)
+
+This is an overall comparison between the simple Negamax, the one with transposition table and the Cython version.
+![image](https://user-images.githubusercontent.com/37183688/63229220-df181300-c206-11e9-85d6-c7b750579e9b.png)
+
+
+
 
 
