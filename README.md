@@ -12,7 +12,7 @@ This project is based on easyAI: https://github.com/Zulko/easyAI
 6. If you need Kivy to run the Knights-Kivy example: `sudo pip install Kivy`
 
 # About
-This project tries contains an AI for the well-known game Gomoku(https://en.wikipedia.org/wiki/Gomoku). It tries to combine several concepts and algorithms to come up with a really competitive algorithm. These things are:
+This project contains an AI for the well-known game Gomoku(https://en.wikipedia.org/wiki/Gomoku). It tries to combine several concepts and algorithms to come up with a really competitive algorithm. These things are:
 - **Negamax with timeout**: Negamax with timeout means that the class receives a variable indicating a duration and it can calculate moves only if the duration is not over. After time is over it has to return the best move it has seen so far. This is useful in this game because the AI can reach a depth of 5 in a reasonable amount of time sometimes but other times it can reach only a depth of 3 in the same amount of time.
 - **Iterative deepening**: With iterative deepening if the algorithm ﬁnds a very good/very bad move it will further evaluate that branch deeper to see if there is an even better/worse outcome. This approach works for Gomoku because some moves can be rejected from the beginning because they won’t have good outcome. In this way a low depth can be maintained for the AI search tree while some branches will have higher depths resulting in a faster execution time.
 - **Heuristic function**
